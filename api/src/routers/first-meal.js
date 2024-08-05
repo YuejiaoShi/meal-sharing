@@ -7,7 +7,7 @@ firstMeal.get("/", async (req, res) => {
   try {
     const meals = await knex.raw("SELECT * FROM Meal ORDER BY id ASC LIMIT 1");
     // In MySQL, data is in the first element of the result
-    res.json(meals[0]);
+    res.json(meals[0][0]);
   } catch (error) {
     console.error("Error fetching all meals:", error);
     res
