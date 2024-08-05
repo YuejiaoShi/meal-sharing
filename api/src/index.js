@@ -7,6 +7,7 @@ import allMeals from "./routers/all-meals.js";
 import futureMeals from "./routers/future-meals.js";
 import pastMeals from "./routers/past-meals.js";
 import firstMeal from "./routers/first-meal.js";
+import lastMeal from "./routers/last-meal.js";
 
 const app = express();
 app.use(cors());
@@ -34,6 +35,7 @@ apiRouter.use("/all-meals", allMeals);
 apiRouter.use("/future-meals", futureMeals);
 apiRouter.use("/past-meals", pastMeals);
 apiRouter.use("/first-meal", firstMeal);
+apiRouter.use("/last-meal", lastMeal);
 // ******** Sub-Routers ********
 
 app.use("/api", apiRouter);
