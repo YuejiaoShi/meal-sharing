@@ -13,7 +13,7 @@ firstMeal.get("/", async (req, res) => {
       res.status(404).json({ message: "No meals found" });
     }
   } catch (error) {
-    console.error("Error fetching all meals:", error);
+    console.error("Error fetching first meal:", error);
     res
       .status(500)
       .json({ error: "Internal Server Error", details: error.message });

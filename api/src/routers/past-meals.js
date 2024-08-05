@@ -9,7 +9,7 @@ pastMeals.get("/", async (req, res) => {
     const meals = await knex.raw("SELECT * FROM Meal WHERE `when` < NOW()");
     res.json(meals[0]); // For MySQL, data is in the first element of the result
   } catch (error) {
-    console.error("Error fetching future meals:", error);
+    console.error("Error fetching past meals:", error);
     res
       .status(500)
       .json({ error: "Internal Server Error", details: error.message });
