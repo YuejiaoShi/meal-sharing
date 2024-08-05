@@ -16,7 +16,7 @@ const apiRouter = express.Router();
 apiRouter.get("/", async (req, res) => {
   res.json({
     hello: "Welcome to Yuejiao's Restaurant API!",
-    description: "Explore our meal offerings through the following routes:",
+    instruction: "Explore our meal offerings through the following routes:",
     routes: {
       "/api/future-meals": "Meals scheduled for the future.",
       "/api/past-meals": "Meals that have already occurred.",
