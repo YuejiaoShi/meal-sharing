@@ -2,10 +2,10 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-// import knex from "./database_client.js";
 // import nestedRouter from "./routers/nested.js";
 import allMeals from "./routers/all-meals.js";
 import futureMeals from "./routers/future-meals.js";
+import pastMeals from "./routers/past-meals.js";
 
 const app = express();
 app.use(cors());
@@ -31,8 +31,8 @@ apiRouter.get("/", async (req, res) => {
 // apiRouter.use("/nested", nestedRouter);
 apiRouter.use("/all-meals", allMeals);
 apiRouter.use("/future-meals", futureMeals);
+apiRouter.use("/past-meals", pastMeals);
 // ******** Sub-Routers ********
-
 
 app.use("/api", apiRouter);
 
