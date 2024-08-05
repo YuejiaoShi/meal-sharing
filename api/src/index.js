@@ -4,6 +4,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import knex from "./database_client.js";
 import nestedRouter from "./routers/nested.js";
+import allMeal from "./routers/all-meals.js";
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,8 @@ apiRouter.get("/", async (req, res) => {
 
 // This nested router example can also be replaced with your own sub-router
 apiRouter.use("/nested", nestedRouter);
+apiRouter.use("/all-meals", allMeal);
+
 
 app.use("/api", apiRouter);
 
