@@ -10,7 +10,7 @@ firstMeal.get("/", async (req, res) => {
     if (meal) {
       res.json(meal);
     } else {
-      res.status(404).json({ message: "No meals found" });
+      res.status(404).send("No meals found :(");
     }
   } catch (error) {
     console.error("Error fetching first meal:", error);
