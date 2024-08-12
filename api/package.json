@@ -11,8 +11,6 @@
   "scripts": {
     "dev": "nodemon src/index.mjs",
     "start": "node src/index.mjs",
-    "start-meals": "node --watch src/routers/meals.js",
-    "start-reservations": "node --watch src/routers/reservations.js",
     "format": "npx prettier . --write",
     "check": "npx eslint . --fix"
   },
