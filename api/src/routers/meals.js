@@ -14,15 +14,23 @@ Meals.get("/", async (req, res) => {
 });
 
 Meals.post("/", async (req, res) => {
-  const { title, description, location, when, max_reservations, price } =
-    req.body;
+  const {
+    title,
+    description,
+    location,
+    when,
+    max_reservations,
+    price,
+    created_date,
+  } = req.body;
   if (
     !title ||
     !description ||
     !location ||
     !when ||
     !max_reservations ||
-    !price
+    !price ||
+    !created_date
   ) {
     return res.status(400).json({
       error: "All fields are required for posting a meal :(",
@@ -30,40 +38,55 @@ Meals.post("/", async (req, res) => {
         title: "string",
         description: "string",
         location: "string",
-        when: "datetime",
+        when: "datetime (YYYY-MM-DD HH:MM:SS)",
         max_reservations: "integer",
         price: "decimal",
+        created_date: "date (YYYY-MM-DD)",
       },
     });
   }
-  const parsedDate = new Date(when);
-  if (isNaN(parsedDate.getTime())) {
+
+// Format when (datetime) and created_date (date)
+  const parsedWhenDate = new Date(when);
+  if (isNaN(parsedWhenDate.getTime())) {
     return res
       .status(400)
       .json({ error: "Invalid date format. Use YYYY-MM-DD HH:MM:SS format." });
   }
+  const formattedWhenDate = parsedWhenDate
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
+  const parsedCreatedDate = new Date(created_date);
+  if (isNaN(parsedCreatedDate.getTime())) {
+    return res
+      .status(400)
+      .json({ error: "Invalid 'created_date' format. Use YYYY-MM-DD format." });
+  }
+  const formattedCreatedDate = parsedCreatedDate.toISOString().slice(0, 10);
 
-  const formattedDate = parsedDate.toISOString().slice(0, 19).replace("T", " ");
   try {
     const [newMeal] = await knex("Meal").insert({
       title,
       description,
       location,
-      when: formattedDate,
+      when: formattedWhenDate,
       max_reservations,
       price,
+      created_date: formattedCreatedDate,
     });
 
     // Respond with the new added meal
     res.status(201).json({
-      message: `${title} is successfully added :)`,
+      status: `${title} is successfully added :)`,
       id: newMeal,
       title,
       description,
       location,
-      when: formattedDate,
+      when: formattedWhenDate,
       max_reservations,
       price,
+      created_date: formattedCreatedDate,
     });
   } catch (error) {
     const errMessage = error.message;
