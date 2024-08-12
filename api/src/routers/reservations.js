@@ -177,17 +177,17 @@ Reservations.delete("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const deletedMeal = await knex("Meal").where("id", id).del();
+    const deletedReservation = await knex("Reservation").where("id", id).del();
 
-    if (deletedMeal) {
-      return res.status(200).send("Meal deleted :)");
+    if (deletedReservation) {
+      return res.status(200).send("Reservation deleted :)");
     } else {
-      return res.status(404).send("Meal Not Found");
+      return res.status(404).send("Reservation Not Found");
     }
   } catch (error) {
     const errMessage = error.message;
     res.status(500).json({ error: errMessage });
   }
 });
-// ----------- /api/meals/:id | DELETE | Deletes the meal by id -----------
+// ----------- /api/reservations/:id | DELETE | Deletes the reservation by id -----------
 export default Reservations;
