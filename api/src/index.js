@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 const apiRouter = express.Router();
 
-apiRouter.get("/", async (req, res) => {
+apiRouter.get("/", (req, res) => {
   res.json({
     hello: "Welcome to Yuejiao's Restaurant API!",
     instruction: "Explore our meal offerings through the following routes:",
