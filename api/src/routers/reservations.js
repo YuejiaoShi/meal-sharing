@@ -3,7 +3,7 @@ import knex from "../database_client.js";
 
 const Reservations = express.Router();
 
-//  ----------- /api/meals | GET | Returns all meals -----------
+//  ----------- /api/reservations | GET | Returns all Reservations -----------
 Reservations.get("/", async (req, res) => {
   try {
     const reservations = await knex("Reservation").select("*");
@@ -13,53 +13,40 @@ Reservations.get("/", async (req, res) => {
     res.status(500).json({ error: errMessage });
   }
 });
-//  ----------- /api/meals | GET | Returns all meals -----------
+//  ----------- /api/reservations | GET | Returns all Reservations -----------
 
-// ----------- /api/meals | POST | Adds a new meal to the database -----------
+// ----------- /api/reservations | POST | Adds a new Reservation to the database -----------
 Reservations.post("/", async (req, res) => {
   const {
-    title,
-    description,
-    location,
-    when,
-    max_reservations,
-    price,
+    number_of_guests,
+    meal_id,
     created_date,
+    contact_phonenumber,
+    contact_name,
+    contact_email,
   } = req.body;
   if (
-    !title ||
-    !description ||
-    !location ||
-    !when ||
-    !max_reservations ||
-    !price ||
-    !created_date
+    !number_of_guests ||
+    !meal_id ||
+    !created_date ||
+    !contact_phonenumber ||
+    !contact_name ||
+    !contact_email
   ) {
     return res.status(400).json({
-      error: "All fields are required for posting a meal :(",
+      error: "All fields are required for posting a reservation :(",
       requiredFields: {
-        title: "string",
-        description: "string",
-        location: "string",
-        when: "datetime (YYYY-MM-DD HH:MM:SS)",
-        max_reservations: "integer",
-        price: "decimal",
+        number_of_guests: "integer",
+        meal_id: "integer",
         created_date: "date (YYYY-MM-DD)",
+        contact_phonenumber: "string",
+        contact_name: "string",
+        contact_email: "string",
       },
     });
   }
 
-  // Format when (datetime) and created_date (date)
-  const parsedWhenDate = new Date(when);
-  if (isNaN(parsedWhenDate.getTime())) {
-    return res
-      .status(400)
-      .json({ error: "Invalid date format. Use YYYY-MM-DD HH:MM:SS format." });
-  }
-  const formattedWhenDate = parsedWhenDate
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
+  // Format created_date (date)
   const parsedCreatedDate = new Date(created_date);
   if (isNaN(parsedCreatedDate.getTime())) {
     return res
@@ -69,27 +56,33 @@ Reservations.post("/", async (req, res) => {
   const formattedCreatedDate = parsedCreatedDate.toISOString().slice(0, 10);
 
   try {
-    const [newMeal] = await knex("Meal").insert({
-      title,
-      description,
-      location,
-      when: formattedWhenDate,
-      max_reservations,
-      price,
+    // Check if the provided meal_id exists in the Meal table
+    const meal = await knex("Meal").where({ id: meal_id }).first();
+    if (!meal) {
+      return res
+        .status(404)
+        .json({ error: "Invalid meal_id. Meal does not exist." });
+    }
+
+    const [newReservation] = await knex("Reservation").insert({
+      number_of_guests,
+      meal_id,
       created_date: formattedCreatedDate,
+      contact_phonenumber,
+      contact_name,
+      contact_email,
     });
 
-    // Respond with the new added meal
+    // Respond with the new added reservation
     res.status(201).json({
-      message: `${title} was added :)`,
-      id: newMeal,
-      title,
-      description,
-      location,
-      when: formattedWhenDate,
-      max_reservations,
-      price,
+      message: `Reservation was added :)`,
+      id: newReservation,
+      number_of_guests,
+      meal_id,
       created_date: formattedCreatedDate,
+      contact_phonenumber,
+      contact_name,
+      contact_email,
     });
   } catch (error) {
     const errMessage = error.message;
