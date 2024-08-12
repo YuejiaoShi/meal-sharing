@@ -119,21 +119,65 @@ Meals.get("/:id", async (req, res) => {
 // ----------- /api/meals | GET | Returns the meal by id -----------
 
 // ----------- /api/meals | PUT | Updates the meal by id -----------
-Meals.get("/:id", async (req, res) => {
+Meals.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-  if (isNaN(id)) {
-    return res.status(400).send("Invalid Id");
-  }
-  try {
-    const meal = await knex("Meal").where("id", id);
+  const {
+    title,
+    description,
+    location,
+    when,
+    max_reservations,
+    price,
+    created_date,
+  } = req.body;
 
-    if (meal) {
-      return res.json(meal);
-    } else {
-      return res.status(404).send("Meal Not Found");
+  const updateFields = {};
+
+  if (title !== undefined) updateFields.title = title;
+  if (description !== undefined) updateFields.description = description;
+  if (location !== undefined) updateFields.location = location;
+  if (when !== undefined) {
+    const parsedWhenDate = new Date(when);
+    if (isNaN(parsedWhenDate.getTime())) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Invalid date format for 'when'. Use YYYY-MM-DD HH:MM:SS format.",
+        });
     }
-  } catch (err) {
-    console.error(err.message);
+    updateFields.when = parsedWhenDate
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+  }
+  if (max_reservations !== undefined)
+    updateFields.max_reservations = max_reservations;
+  if (price !== undefined) updateFields.price = price;
+  if (created_date !== undefined) {
+    const parsedCreatedDate = new Date(created_date);
+    if (isNaN(parsedCreatedDate.getTime())) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Invalid date format for 'created_date'. Use YYYY-MM-DD format.",
+        });
+    }
+    updateFields.created_date = parsedCreatedDate.toISOString().slice(0, 10);
+  }
+
+  try {
+    const updateMeal = await knex("Meal").where("id", id).update(updateFields);
+
+    if (updateMeal > 0) {
+      res.status(200).json({ message: "Meal updated :)" });
+    } else {
+      res.status(404).json({ error: "Meal Not Found" });
+    }
+  } catch (error) {
+    console.error("Error updating meal:", error.message);
+    res.status(500).json({ error: "Failed to update meal" });
   }
 });
 // ----------- /api/meals | PUT | Updates the meal by id -----------
