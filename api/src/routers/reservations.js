@@ -110,42 +110,29 @@ Reservations.get("/:id", async (req, res) => {
     res.status(500).json({ error: errMessage });
   }
 });
-// ----------- /api/meals/:id | GET | Returns the meal by id -----------
+// ----------- /api/reservations/:id | GET | Returns the reservation by id -----------
 
-// ----------- /api/meals/:id | PUT | Updates the meal by id -----------
+// ----------- /api/reservations/:id | PUT | Updates the reservation by id -----------
 Reservations.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const {
-    title,
-    description,
-    location,
-    when,
-    max_reservations,
-    price,
+    number_of_guests,
+    meal_id,
     created_date,
+    contact_phonenumber,
+    contact_name,
+    contact_email,
   } = req.body;
 
   const updateFields = {};
 
-  if (title !== undefined) updateFields.title = title;
-  if (description !== undefined) updateFields.description = description;
-  if (location !== undefined) updateFields.location = location;
-  if (when !== undefined) {
-    const parsedWhenDate = new Date(when);
-    if (isNaN(parsedWhenDate.getTime())) {
-      return res.status(400).json({
-        error:
-          "Invalid date format for 'when'. Use YYYY-MM-DD HH:MM:SS format.",
-      });
-    }
-    updateFields.when = parsedWhenDate
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
-  }
-  if (max_reservations !== undefined)
-    updateFields.max_reservations = max_reservations;
-  if (price !== undefined) updateFields.price = price;
+  if (number_of_guests !== undefined)
+    updateFields.number_of_guests = number_of_guests;
+  if (meal_id !== undefined) updateFields.meal_id = meal_id;
+  if (contact_phonenumber !== undefined)
+    updateFields.contact_phonenumber = contact_phonenumber;
+  if (contact_name !== undefined) updateFields.contact_name = contact_name;
+  if (contact_email !== undefined) updateFields.contact_email = contact_email;
   if (created_date !== undefined) {
     const parsedCreatedDate = new Date(created_date);
     if (isNaN(parsedCreatedDate.getTime())) {
@@ -157,24 +144,33 @@ Reservations.put("/:id", async (req, res) => {
   }
 
   try {
-    const updateMeal = await knex("Meal").where("id", id).update(updateFields);
+    const meal = await knex("Meal").where({ id: meal_id }).first();
+    if (!meal) {
+      return res
+        .status(404)
+        .json({ error: "Invalid meal_id. Meal does not exist." });
+    }
 
-    if (updateMeal > 0) {
+    const updateReservation = await knex("Reservation")
+      .where("id", id)
+      .update(updateFields);
+
+    if (updateReservation > 0) {
       res.status(200).json({
-        message: "Meal updated :)",
-        meal: await knex("Meal").where("id", id),
+        message: "Reservation updated :)",
+        reservation: await knex("Reservation").where("id", id),
       });
     } else {
-      res.status(404).json({ error: "Meal Not Found" });
+      res.status(404).json({ error: "Reservation Not Found" });
     }
   } catch (error) {
     const errMessage = error.message;
     res.status(500).json({ error: errMessage });
   }
 });
-// ----------- /api/meals/:id | PUT | Updates the meal by id -----------
+// ----------- /api/reservations/:id | PUT | Updates the reservation by id -----------
 
-// ----------- /api/meals/:id | DELETE | Deletes the meal by id -----------
+// ----------- /api/reservations/:id | DELETE | Deletes the reservation by id -----------
 Reservations.delete("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
