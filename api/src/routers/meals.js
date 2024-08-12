@@ -98,7 +98,7 @@ Meals.post("/", async (req, res) => {
 });
 // ----------- /api/meals | POST | Adds a new meal to the database -----------
 
-// ----------- /api/meals | GET | Returns the meal by id -----------
+// ----------- /api/meals/:id | GET | Returns the meal by id -----------
 Meals.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
@@ -116,9 +116,9 @@ Meals.get("/:id", async (req, res) => {
     console.error(err.message);
   }
 });
-// ----------- /api/meals | GET | Returns the meal by id -----------
+// ----------- /api/meals/:id | GET | Returns the meal by id -----------
 
-// ----------- /api/meals | PUT | Updates the meal by id -----------
+// ----------- /api/meals/:id | PUT | Updates the meal by id -----------
 Meals.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const {
@@ -166,12 +166,10 @@ Meals.put("/:id", async (req, res) => {
     const updateMeal = await knex("Meal").where("id", id).update(updateFields);
 
     if (updateMeal > 0) {
-      res
-        .status(200)
-        .json({
-          message: "Meal updated :)",
-          meal: await knex("Meal").where("id", id),
-        });
+      res.status(200).json({
+        message: "Meal updated :)",
+        meal: await knex("Meal").where("id", id),
+      });
     } else {
       res.status(404).json({ error: "Meal Not Found" });
     }
@@ -180,6 +178,8 @@ Meals.put("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to update meal" });
   }
 });
-// ----------- /api/meals | PUT | Updates the meal by id -----------
+// ----------- /api/meals/:id | PUT | Updates the meal by id -----------
 
+// ----------- /api/meals/:id | DELETE | Deletes the meal by id -----------
+// ----------- /api/meals/:id | DELETE | Deletes the meal by id -----------
 export default Meals;
