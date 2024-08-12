@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 // import nestedRouter from "./routers/nested.js";
 import knex from "knex";
 import Meals from "./routers/meals.js";
+import Reservations from "./routers/reservations.js";
 
 const app = express();
 app.use(cors());
@@ -103,6 +104,7 @@ apiRouter.get("/last-meal", async (req, res) => {
 
 // ******** Sub-Routers ********
 apiRouter.use("/meals", Meals);
+apiRouter.use("/reservations", Reservations);
 
 app.use("/api", apiRouter);
 
