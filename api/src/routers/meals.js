@@ -3,6 +3,7 @@ import knex from "../database_client.js";
 
 const Meals = express.Router();
 
+//  ----------- /api/meals | GET | Returns all meals -----------
 Meals.get("/", async (req, res) => {
   try {
     const meals = await knex("Meal").select("*");
@@ -12,7 +13,9 @@ Meals.get("/", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch meals" });
   }
 });
+//  ----------- /api/meals | GET | Returns all meals -----------
 
+// ----------- /api/meals | POST | Adds a new meal to the database -----------
 Meals.post("/", async (req, res) => {
   const {
     title,
@@ -78,7 +81,7 @@ Meals.post("/", async (req, res) => {
 
     // Respond with the new added meal
     res.status(201).json({
-      status: `${title} is successfully added :)`,
+      message: `${title} was added :)`,
       id: newMeal,
       title,
       description,
@@ -93,7 +96,9 @@ Meals.post("/", async (req, res) => {
     res.status(500).json({ error: errMessage });
   }
 });
+// ----------- /api/meals | POST | Adds a new meal to the database -----------
 
+// ----------- /api/meals | GET | Returns the meal by id -----------
 Meals.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
@@ -111,5 +116,26 @@ Meals.get("/:id", async (req, res) => {
     console.error(err.message);
   }
 });
+// ----------- /api/meals | GET | Returns the meal by id -----------
+
+// ----------- /api/meals | PUT | Updates the meal by id -----------
+Meals.get("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).send("Invalid Id");
+  }
+  try {
+    const meal = await knex("Meal").where("id", id);
+
+    if (meal) {
+      return res.json(meal);
+    } else {
+      return res.status(404).send("Meal Not Found");
+    }
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+// ----------- /api/meals | PUT | Updates the meal by id -----------
 
 export default Meals;
