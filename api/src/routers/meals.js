@@ -46,7 +46,7 @@ Meals.post("/", async (req, res) => {
     });
   }
 
-// Format when (datetime) and created_date (date)
+  // Format when (datetime) and created_date (date)
   const parsedWhenDate = new Date(when);
   if (isNaN(parsedWhenDate.getTime())) {
     return res
@@ -91,6 +91,24 @@ Meals.post("/", async (req, res) => {
   } catch (error) {
     const errMessage = error.message;
     res.status(500).json({ error: errMessage });
+  }
+});
+
+Meals.get("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).send("Invalid Id");
+  }
+  try {
+    const meal = await knex("Meal").where("id", id);
+
+    if (meal) {
+      return res.json(meal);
+    } else {
+      return res.status(404).send("Meal Not Found");
+    }
+  } catch (err) {
+    console.error(err.message);
   }
 });
 
