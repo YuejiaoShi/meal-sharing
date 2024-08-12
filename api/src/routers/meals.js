@@ -139,12 +139,10 @@ Meals.put("/:id", async (req, res) => {
   if (when !== undefined) {
     const parsedWhenDate = new Date(when);
     if (isNaN(parsedWhenDate.getTime())) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Invalid date format for 'when'. Use YYYY-MM-DD HH:MM:SS format.",
-        });
+      return res.status(400).json({
+        error:
+          "Invalid date format for 'when'. Use YYYY-MM-DD HH:MM:SS format.",
+      });
     }
     updateFields.when = parsedWhenDate
       .toISOString()
@@ -157,12 +155,9 @@ Meals.put("/:id", async (req, res) => {
   if (created_date !== undefined) {
     const parsedCreatedDate = new Date(created_date);
     if (isNaN(parsedCreatedDate.getTime())) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Invalid date format for 'created_date'. Use YYYY-MM-DD format.",
-        });
+      return res.status(400).json({
+        error: "Invalid date format for 'created_date'. Use YYYY-MM-DD format.",
+      });
     }
     updateFields.created_date = parsedCreatedDate.toISOString().slice(0, 10);
   }
@@ -171,7 +166,12 @@ Meals.put("/:id", async (req, res) => {
     const updateMeal = await knex("Meal").where("id", id).update(updateFields);
 
     if (updateMeal > 0) {
-      res.status(200).json({ message: "Meal updated :)" });
+      res
+        .status(200)
+        .json({
+          message: "Meal updated :)",
+          meal: await knex("Meal").where("id", id),
+        });
     } else {
       res.status(404).json({ error: "Meal Not Found" });
     }
