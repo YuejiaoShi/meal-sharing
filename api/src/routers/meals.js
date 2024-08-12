@@ -9,8 +9,8 @@ Meals.get("/", async (req, res) => {
     const meals = await knex("Meal").select("*");
     res.json(meals);
   } catch (error) {
-    console.error("Error fetching meals:", error);
-    res.status(500).json({ error: "Failed to fetch meals" });
+    const errMessage = error.message;
+    res.status(500).json({ error: errMessage });
   }
 });
 //  ----------- /api/meals | GET | Returns all meals -----------
@@ -112,8 +112,9 @@ Meals.get("/:id", async (req, res) => {
     } else {
       return res.status(404).send("Meal Not Found");
     }
-  } catch (err) {
-    console.error(err.message);
+  } catch (error) {
+    const errMessage = error.message;
+    res.status(500).json({ error: errMessage });
   }
 });
 // ----------- /api/meals/:id | GET | Returns the meal by id -----------
@@ -174,8 +175,8 @@ Meals.put("/:id", async (req, res) => {
       res.status(404).json({ error: "Meal Not Found" });
     }
   } catch (error) {
-    console.error("Error updating meal:", error.message);
-    res.status(500).json({ error: "Failed to update meal" });
+    const errMessage = error.message;
+    res.status(500).json({ error: errMessage });
   }
 });
 // ----------- /api/meals/:id | PUT | Updates the meal by id -----------
@@ -194,8 +195,9 @@ Meals.delete("/:id", async (req, res) => {
     } else {
       return res.status(404).send("Meal Not Found");
     }
-  } catch (err) {
-    console.error(err.message);
+  } catch (error) {
+    const errMessage = error.message;
+    res.status(500).json({ error: errMessage });
   }
 });
 // ----------- /api/meals/:id | DELETE | Deletes the meal by id -----------
