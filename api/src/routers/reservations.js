@@ -6,11 +6,11 @@ const Reservations = express.Router();
 //  ----------- /api/meals | GET | Returns all meals -----------
 Reservations.get("/", async (req, res) => {
   try {
-    const meals = await knex("Meal").select("*");
-    res.json(meals);
+    const reservations = await knex("Reservation").select("*");
+    res.json(reservations);
   } catch (error) {
-    console.error("Error fetching meals:", error);
-    res.status(500).json({ error: "Failed to fetch meals" });
+    console.error("Error fetching reservations:", error);
+    res.status(500).json({ error: "Failed to fetch reservations" });
   }
 });
 //  ----------- /api/meals | GET | Returns all meals -----------
@@ -99,7 +99,7 @@ Reservations.post("/", async (req, res) => {
 // ----------- /api/meals | POST | Adds a new meal to the database -----------
 
 // ----------- /api/meals/:id | GET | Returns the meal by id -----------
-Meals.get("/:id", async (req, res) => {
+Reservations.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
     return res.status(400).send("Invalid Id");
