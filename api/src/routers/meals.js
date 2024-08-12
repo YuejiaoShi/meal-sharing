@@ -181,5 +181,22 @@ Meals.put("/:id", async (req, res) => {
 // ----------- /api/meals/:id | PUT | Updates the meal by id -----------
 
 // ----------- /api/meals/:id | DELETE | Deletes the meal by id -----------
+Meals.delete("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).send("Invalid Id");
+  }
+  try {
+    const deletedMeal = await knex("Meal").where("id", id).del();
+
+    if (deletedMeal) {
+      return res.status(200).send("Meal deleted :)");
+    } else {
+      return res.status(404).send("Meal Not Found");
+    }
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 // ----------- /api/meals/:id | DELETE | Deletes the meal by id -----------
 export default Meals;
