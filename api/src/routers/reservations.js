@@ -89,21 +89,21 @@ Reservations.post("/", async (req, res) => {
     res.status(500).json({ error: errMessage });
   }
 });
-// ----------- /api/meals | POST | Adds a new meal to the database -----------
+// ----------- /api/reservations | POST | Adds a new reservation to the database -----------
 
-// ----------- /api/meals/:id | GET | Returns the meal by id -----------
+// ----------- /api/reservations/:id | GET | Returns the reservation by id -----------
 Reservations.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const meal = await knex("Meal").where("id", id);
+    const reservation = await knex("Reservation").where("id", id);
 
-    if (meal) {
-      return res.json(meal);
+    if (reservation) {
+      return res.json(reservation);
     } else {
-      return res.status(404).send("Meal Not Found");
+      return res.status(404).send("Reservation Not Found");
     }
   } catch (error) {
     const errMessage = error.message;
