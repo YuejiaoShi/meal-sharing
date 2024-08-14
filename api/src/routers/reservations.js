@@ -173,14 +173,14 @@ if (Object.keys(fieldsToUpdate).length === 0) {
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
-    const updatedReservation = await knex("Reservation")
+    const updateReservation = await knex("Reservation")
       .where("id", id)
       .update(fieldsToUpdate);
 
-    if (updatedReservation > 0) {
+    if (updateReservation > 0) {
       res.status(200).json({
         message: "Reservation updated :)",
-        reservation: updatedReservation,
+        reservation: await knex("Reservation").where("id", id),
       });
     } else {
       res.status(404).json({ error: "Reservation Not Found" });

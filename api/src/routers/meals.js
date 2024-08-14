@@ -170,14 +170,14 @@ meals.put("/:id", async (req, res) => {
   }
 
   try {
-    const updatedMeal = await knex("Meal")
+    const updateMeal = await knex("Meal")
       .where("id", id)
       .update(fieldsToUpdate);
 
-    if (updatedMeal > 0) {
+    if (updateMeal > 0) {
       res.status(200).json({
         message: "Meal updated :)",
-        meal: updatedMeal,
+        meal: await knex("Meal").where("id", id),
       });
     } else {
       res.status(404).json({ error: "Meal Not Found" });
