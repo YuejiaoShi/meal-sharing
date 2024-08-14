@@ -132,11 +132,11 @@ meals.put("/:id", async (req, res) => {
     created_date,
   } = req.body;
 
-  const updateFields = {};
+  const fieldsToUpdate = {};
 
-  if (title !== undefined) updateFields.title = title;
-  if (description !== undefined) updateFields.description = description;
-  if (location !== undefined) updateFields.location = location;
+  if (title !== undefined) fieldsToUpdate.title = title;
+  if (description !== undefined) fieldsToUpdate.description = description;
+  if (location !== undefined) fieldsToUpdate.location = location;
   if (when !== undefined) {
     const parsedWhenDate = new Date(when);
     if (isNaN(parsedWhenDate.getTime())) {
@@ -145,14 +145,14 @@ meals.put("/:id", async (req, res) => {
           "Invalid date format for 'when'. Use YYYY-MM-DD HH:MM:SS format.",
       });
     }
-    updateFields.when = parsedWhenDate
+    fieldsToUpdate.when = parsedWhenDate
       .toISOString()
       .slice(0, 19)
       .replace("T", " ");
   }
   if (max_reservations !== undefined)
-    updateFields.max_reservations = max_reservations;
-  if (price !== undefined) updateFields.price = price;
+    fieldsToUpdate.max_reservations = max_reservations;
+  if (price !== undefined) fieldsToUpdate.price = price;
   if (created_date !== undefined) {
     const parsedCreatedDate = new Date(created_date);
     if (isNaN(parsedCreatedDate.getTime())) {
@@ -160,11 +160,11 @@ meals.put("/:id", async (req, res) => {
         error: "Invalid date format for 'created_date'. Use YYYY-MM-DD format.",
       });
     }
-    updateFields.created_date = parsedCreatedDate.toISOString().slice(0, 10);
+    fieldsToUpdate.created_date = parsedCreatedDate.toISOString().slice(0, 10);
   }
 
   try {
-    const updatedMeal = await knex("Meal").where("id", id).update(updateFields);
+    const updatedMeal = await knex("Meal").where("id", id).update(fieldsToUpdate);
 
     if (updatedMeal > 0) {
       res.status(200).json({

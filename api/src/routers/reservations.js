@@ -124,15 +124,15 @@ reservations.put("/:id", async (req, res) => {
     contact_email,
   } = req.body;
 
-  const updateFields = {};
+  const fieldsToUpdate = {};
 
   if (number_of_guests !== undefined)
-    updateFields.number_of_guests = number_of_guests;
-  if (meal_id !== undefined) updateFields.meal_id = meal_id;
+    fieldsToUpdate.number_of_guests = number_of_guests;
+  if (meal_id !== undefined) fieldsToUpdate.meal_id = meal_id;
   if (contact_phonenumber !== undefined)
-    updateFields.contact_phonenumber = contact_phonenumber;
-  if (contact_name !== undefined) updateFields.contact_name = contact_name;
-  if (contact_email !== undefined) updateFields.contact_email = contact_email;
+    fieldsToUpdate.contact_phonenumber = contact_phonenumber;
+  if (contact_name !== undefined) fieldsToUpdate.contact_name = contact_name;
+  if (contact_email !== undefined) fieldsToUpdate.contact_email = contact_email;
   if (created_date !== undefined) {
     const parsedCreatedDate = new Date(created_date);
     if (isNaN(parsedCreatedDate.getTime())) {
@@ -140,7 +140,7 @@ reservations.put("/:id", async (req, res) => {
         error: "Invalid date format for 'created_date'. Use YYYY-MM-DD format.",
       });
     }
-    updateFields.created_date = parsedCreatedDate.toISOString().slice(0, 10);
+    fieldsToUpdate.created_date = parsedCreatedDate.toISOString().slice(0, 10);
   }
 
   try {
@@ -153,7 +153,7 @@ reservations.put("/:id", async (req, res) => {
 
     const updatedReservation = await knex("Reservation")
       .where("id", id)
-      .update(updateFields);
+      .update(fieldsToUpdate);
 
     if (updatedReservation > 0) {
       res.status(200).json({
