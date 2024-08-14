@@ -1,10 +1,10 @@
 import express from "express";
 import knex from "../database_client.js";
 
-const Meals = express.Router();
+const meals = express.Router();
 
 //  ----------- /api/meals | GET | Returns all meals -----------
-Meals.get("/", async (req, res) => {
+meals.get("/", async (req, res) => {
   try {
     const meals = await knex("Meal").select("*");
     res.json(meals);
@@ -16,7 +16,7 @@ Meals.get("/", async (req, res) => {
 //  ----------- /api/meals | GET | Returns all meals -----------
 
 // ----------- /api/meals | POST | Adds a new meal to the database -----------
-Meals.post("/", async (req, res) => {
+meals.post("/", async (req, res) => {
   const {
     title,
     description,
@@ -99,7 +99,7 @@ Meals.post("/", async (req, res) => {
 // ----------- /api/meals | POST | Adds a new meal to the database -----------
 
 // ----------- /api/meals/:id | GET | Returns the meal by id -----------
-Meals.get("/:id", async (req, res) => {
+meals.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
     return res.status(400).send("Invalid Id");
@@ -120,7 +120,7 @@ Meals.get("/:id", async (req, res) => {
 // ----------- /api/meals/:id | GET | Returns the meal by id -----------
 
 // ----------- /api/meals/:id | PUT | Updates the meal by id -----------
-Meals.put("/:id", async (req, res) => {
+meals.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const {
     title,
@@ -182,7 +182,7 @@ Meals.put("/:id", async (req, res) => {
 // ----------- /api/meals/:id | PUT | Updates the meal by id -----------
 
 // ----------- /api/meals/:id | DELETE | Deletes the meal by id -----------
-Meals.delete("/:id", async (req, res) => {
+meals.delete("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
     return res.status(400).send("Invalid Id");
@@ -201,4 +201,4 @@ Meals.delete("/:id", async (req, res) => {
   }
 });
 // ----------- /api/meals/:id | DELETE | Deletes the meal by id -----------
-export default Meals;
+export default meals;

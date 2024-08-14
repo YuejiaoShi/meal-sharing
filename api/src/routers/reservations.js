@@ -1,10 +1,10 @@
 import express from "express";
 import knex from "../database_client.js";
 
-const Reservations = express.Router();
+const reservations = express.Router();
 
 //  ----------- /api/reservations | GET | Returns all Reservations -----------
-Reservations.get("/", async (req, res) => {
+reservations.get("/", async (req, res) => {
   try {
     const reservations = await knex("Reservation").select("*");
     res.json(reservations);
@@ -16,7 +16,7 @@ Reservations.get("/", async (req, res) => {
 //  ----------- /api/reservations | GET | Returns all Reservations -----------
 
 // ----------- /api/reservations | POST | Adds a new Reservation to the database -----------
-Reservations.post("/", async (req, res) => {
+reservations.post("/", async (req, res) => {
   const {
     number_of_guests,
     meal_id,
@@ -92,7 +92,7 @@ Reservations.post("/", async (req, res) => {
 // ----------- /api/reservations | POST | Adds a new reservation to the database -----------
 
 // ----------- /api/reservations/:id | GET | Returns the reservation by id -----------
-Reservations.get("/:id", async (req, res) => {
+reservations.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
     return res.status(400).send("Invalid Id");
@@ -113,7 +113,7 @@ Reservations.get("/:id", async (req, res) => {
 // ----------- /api/reservations/:id | GET | Returns the reservation by id -----------
 
 // ----------- /api/reservations/:id | PUT | Updates the reservation by id -----------
-Reservations.put("/:id", async (req, res) => {
+reservations.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const {
     number_of_guests,
@@ -171,7 +171,7 @@ Reservations.put("/:id", async (req, res) => {
 // ----------- /api/reservations/:id | PUT | Updates the reservation by id -----------
 
 // ----------- /api/reservations/:id | DELETE | Deletes the reservation by id -----------
-Reservations.delete("/:id", async (req, res) => {
+reservations.delete("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
     return res.status(400).send("Invalid Id");
@@ -190,4 +190,4 @@ Reservations.delete("/:id", async (req, res) => {
   }
 });
 // ----------- /api/reservations/:id | DELETE | Deletes the reservation by id -----------
-export default Reservations;
+export default reservations;
