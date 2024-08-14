@@ -139,34 +139,30 @@ reservations.put("/:id", async (req, res) => {
 
   const fieldsToUpdate = {};
 
-  switch (true) {
-    case number_of_guests !== undefined:
-      fieldsToUpdate.number_of_guests = number_of_guests;
-      break;
-    case meal_id !== undefined:
-      fieldsToUpdate.meal_id = meal_id;
-      break;
-    case contact_phonenumber !== undefined:
-      fieldsToUpdate.contact_phonenumber = contact_phonenumber;
-      break;
-    case contact_name !== undefined:
-      fieldsToUpdate.contact_name = contact_name;
-      break;
-    case contact_email !== undefined:
-      fieldsToUpdate.contact_email = contact_email;
-      break;
-    case created_date !== undefined:
-      fieldsToUpdate.created_date = handleFormatDateOrDatetime(
-        "created_date",
-        created_date,
-        "date",
-        res
-      );
-      break;
-    default:
-      console.log("No fields to update.");
-      res.status(400).json({ error: "No fields provided for update." });
-      return; 
+  if (number_of_guests !== undefined) {
+    fieldsToUpdate.number_of_guests = number_of_guests;
+}
+
+if (meal_id !== undefined) {
+    fieldsToUpdate.meal_id = meal_id;
+}
+
+if (contact_phonenumber !== undefined) {
+    fieldsToUpdate.contact_phonenumber = contact_phonenumber;
+}
+
+if (contact_name !== undefined) {
+    fieldsToUpdate.contact_name = contact_name;
+}
+
+if (contact_email !== undefined) {
+    fieldsToUpdate.contact_email = contact_email;
+}
+if (created_date !== undefined) {
+  fieldsToUpdate.created_date = handleFormatDateOrDatetime("created_date", created_date, "date", res);
+}
+if (Object.keys(fieldsToUpdate).length === 0) {
+  return res.status(400).json({ error: "No fields provided for update." });
 }
 
   try {
