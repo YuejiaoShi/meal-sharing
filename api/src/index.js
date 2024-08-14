@@ -29,76 +29,66 @@ apiRouter.get("/", (req, res) => {
 
 apiRouter.get("/all-meals", async (req, res) => {
   try {
-    const meals = await knex.raw("SELECT * FROM Meal ORDER BY id");
-    // In MySQL, data is in the first element of the result
-    res.json(meals[0]);
+    const meals = await knex("Meal").orderBy("id", "asc");
+    res.json(meals);
   } catch (error) {
     console.error("Error fetching all meals:", error);
-    res
-      .status(500)
-      .json({ error: "Internal Server Error", details: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
 apiRouter.get("/future-meals", async (req, res) => {
   try {
     // MySQL's NOW() func could get the current date and time
-    const meals = await knex.raw("SELECT * FROM Meal WHERE `when` > NOW()");
-    res.json(meals[0]); // For MySQL, data is in the first element of the result
+    const futureMeals = await knex("Meal").where(
+      "when",
+      ">",
+      knex.raw("NOW()")
+    );
+    res.json(futureMeals);
   } catch (error) {
     console.error("Error fetching future meals:", error);
-    res
-      .status(500)
-      .json({ error: "Internal Server Error", details: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
 apiRouter.get("/first-meals", async (req, res) => {
   try {
-    const result = await knex.raw("SELECT * FROM Meal ORDER BY id ASC LIMIT 1");
-    const meal = result[0][0];
-    if (meal) {
-      res.json(meal);
-    } else {
+    const firstMeal = await knex("Meal").orderBy("id", "asc").limit(1);
+
+    if (firstMeal.length == 0) {
       res.status(404).send("No meals found :(");
+    } else {
+      res.json(firstMeal);
     }
   } catch (error) {
     console.error("Error fetching first meal:", error);
-    res
-      .status(500)
-      .json({ error: "Internal Server Error", details: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
 apiRouter.get("/past-meals", async (req, res) => {
   try {
     // MySQL's NOW() func could get the current date and time
-    const meals = await knex.raw("SELECT * FROM Meal WHERE `when` < NOW()");
-    res.json(meals[0]); // For MySQL, data is in the first element of the result
+    const pastMeals = await knex("Meal").where("when", "<", knex.raw("NOW()"));
+    res.json(pastMeals);
   } catch (error) {
     console.error("Error fetching past meals:", error);
-    res
-      .status(500)
-      .json({ error: "Internal Server Error", details: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
 apiRouter.get("/last-meal", async (req, res) => {
   try {
-    const result = await knex.raw(
-      "SELECT * FROM Meal ORDER BY id DESC LIMIT 1"
-    );
-    const meal = result[0][0];
-    if (meal) {
-      res.json(meal);
-    } else {
+    const lastMeal = await knex("Meal").orderBy("ID", "desc").limit(1);
+    if (lastMeal.length == 0) {
       res.status(404).send("No meals found :(");
+    } else {
+      res.json(lastMeal);
     }
   } catch (error) {
     console.error("Error fetching last meal:", error);
-    res
-      .status(500)
-      .json({ error: "Internal Server Error", details: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
