@@ -151,14 +151,14 @@ reservations.put("/:id", async (req, res) => {
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
-    const updateReservation = await knex("Reservation")
+    const updatedReservation = await knex("Reservation")
       .where("id", id)
       .update(updateFields);
 
-    if (updateReservation > 0) {
+    if (updatedReservation > 0) {
       res.status(200).json({
         message: "Reservation updated :)",
-        reservation: await knex("Reservation").where("id", id),
+        reservation: updatedReservation,
       });
     } else {
       res.status(404).json({ error: "Reservation Not Found" });
