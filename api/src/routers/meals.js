@@ -3,6 +3,20 @@ import knex from "../database_client.js";
 
 const meals = express.Router();
 
+// Handle date or dateime formatting
+function handleFormatDateOrDatetime(fieldToFormat, value, format, res) {
+  const parsedDate = new Date(value);
+  if (isNaN(parsedDate.getTime())) {
+    return res.status(400).json({
+      error: `Invalid date format for '${fieldToFormat}'. Use ${format === "date" ? "YYYY-MM-DD" : "YYYY-MM-DD HH:MM:SS"} format.`,
+    });
+  }
+  return parsedDate
+    .toISOString()
+    .slice(0, format === "date" ? 10 : 19)
+    .replace("T", " ");
+}
+
 //  ----------- /api/meals | GET | Returns all meals -----------
 meals.get("/", async (req, res) => {
   try {
@@ -49,24 +63,19 @@ meals.post("/", async (req, res) => {
     });
   }
 
-  // Format when (datetime) and created_date (date)
-  const parsedWhenDate = new Date(when);
-  if (isNaN(parsedWhenDate.getTime())) {
-    return res
-      .status(400)
-      .json({ error: "Invalid date format. Use YYYY-MM-DD HH:MM:SS format." });
-  }
-  const formattedWhenDate = parsedWhenDate
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
-  const parsedCreatedDate = new Date(created_date);
-  if (isNaN(parsedCreatedDate.getTime())) {
-    return res
-      .status(400)
-      .json({ error: "Invalid 'created_date' format. Use YYYY-MM-DD format." });
-  }
-  const formattedCreatedDate = parsedCreatedDate.toISOString().slice(0, 10);
+  const formattedWhenDate = handleFormatDateOrDatetime(
+    "when",
+    when,
+    "datetime",
+    res
+  );
+
+  const formattedCreatedDate = handleFormatDateOrDatetime(
+    "created_date",
+    created_date,
+    "date",
+    res
+  );
 
   try {
     const [newMeal] = await knex("Meal").insert({
@@ -138,33 +147,29 @@ meals.put("/:id", async (req, res) => {
   if (description !== undefined) fieldsToUpdate.description = description;
   if (location !== undefined) fieldsToUpdate.location = location;
   if (when !== undefined) {
-    const parsedWhenDate = new Date(when);
-    if (isNaN(parsedWhenDate.getTime())) {
-      return res.status(400).json({
-        error:
-          "Invalid date format for 'when'. Use YYYY-MM-DD HH:MM:SS format.",
-      });
-    }
-    fieldsToUpdate.when = parsedWhenDate
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
+    fieldsToUpdate.when = handleFormatDateOrDatetime(
+      "when",
+      when,
+      "datetime",
+      res
+    );
   }
   if (max_reservations !== undefined)
     fieldsToUpdate.max_reservations = max_reservations;
   if (price !== undefined) fieldsToUpdate.price = price;
   if (created_date !== undefined) {
-    const parsedCreatedDate = new Date(created_date);
-    if (isNaN(parsedCreatedDate.getTime())) {
-      return res.status(400).json({
-        error: "Invalid date format for 'created_date'. Use YYYY-MM-DD format.",
-      });
-    }
-    fieldsToUpdate.created_date = parsedCreatedDate.toISOString().slice(0, 10);
+    fieldsToUpdate.created_date = handleFormatDateOrDatetime(
+      "created_date",
+      created_date,
+      "date",
+      res
+    );
   }
 
   try {
-    const updatedMeal = await knex("Meal").where("id", id).update(fieldsToUpdate);
+    const updatedMeal = await knex("Meal")
+      .where("id", id)
+      .update(fieldsToUpdate);
 
     if (updatedMeal > 0) {
       res.status(200).json({

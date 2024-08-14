@@ -3,6 +3,20 @@ import knex from "../database_client.js";
 
 const reservations = express.Router();
 
+// Handle date or dateime formatting
+function handleFormatDateOrDatetime(fieldToFormat, value, format, res) {
+  const parsedDate = new Date(value);
+  if (isNaN(parsedDate.getTime())) {
+    return res.status(400).json({
+      error: `Invalid date format for '${fieldToFormat}'. Use ${format === "date" ? "YYYY-MM-DD" : "YYYY-MM-DD HH:MM:SS"} format.`,
+    });
+  }
+  return parsedDate
+    .toISOString()
+    .slice(0, format === "date" ? 10 : 19)
+    .replace("T", " ");
+}
+
 //  ----------- /api/reservations | GET | Returns all Reservations -----------
 reservations.get("/", async (req, res) => {
   try {
@@ -47,13 +61,12 @@ reservations.post("/", async (req, res) => {
   }
 
   // Format created_date (date)
-  const parsedCreatedDate = new Date(created_date);
-  if (isNaN(parsedCreatedDate.getTime())) {
-    return res
-      .status(400)
-      .json({ error: "Invalid 'created_date' format. Use YYYY-MM-DD format." });
-  }
-  const formattedCreatedDate = parsedCreatedDate.toISOString().slice(0, 10);
+  const formattedCreatedDate = handleFormatDateOrDatetime(
+    "created_date",
+    created_date,
+    "date",
+    res
+  );
 
   try {
     // Check if the provided meal_id exists in the Meal table
@@ -134,13 +147,12 @@ reservations.put("/:id", async (req, res) => {
   if (contact_name !== undefined) fieldsToUpdate.contact_name = contact_name;
   if (contact_email !== undefined) fieldsToUpdate.contact_email = contact_email;
   if (created_date !== undefined) {
-    const parsedCreatedDate = new Date(created_date);
-    if (isNaN(parsedCreatedDate.getTime())) {
-      return res.status(400).json({
-        error: "Invalid date format for 'created_date'. Use YYYY-MM-DD format.",
-      });
-    }
-    fieldsToUpdate.created_date = parsedCreatedDate.toISOString().slice(0, 10);
+    fieldsToUpdate.created_date = handleFormatDateOrDatetime(
+      "created_date",
+      created_date,
+      "date",
+      res
+    );
   }
 
   try {
