@@ -3,11 +3,9 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 // import nestedRouter from "./routers/nested.js";
-import allMeals from "./routers/all-meals.js";
-import futureMeals from "./routers/future-meals.js";
-import pastMeals from "./routers/past-meals.js";
-import firstMeal from "./routers/first-meal.js";
-import lastMeal from "./routers/last-meal.js";
+import knex from "knex";
+import meals from "./routers/meals.js";
+import reservations from "./routers/reservations.js";
 
 const app = express();
 app.use(cors());
@@ -15,7 +13,7 @@ app.use(bodyParser.json());
 
 const apiRouter = express.Router();
 
-apiRouter.get("/", async (req, res) => {
+apiRouter.get("/", (req, res) => {
   res.json({
     hello: "Welcome to Yuejiao's Restaurant API!",
     instruction: "Explore our meal offerings through the following routes:",
@@ -29,14 +27,74 @@ apiRouter.get("/", async (req, res) => {
   });
 });
 
+apiRouter.get("/all-meals", async (req, res) => {
+  try {
+    const meals = await knex("Meal").orderBy("id", "asc");
+    res.json(meals);
+  } catch (error) {
+    console.error("Error fetching all meals:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+apiRouter.get("/future-meals", async (req, res) => {
+  try {
+    // MySQL's NOW() func could get the current date and time
+    const futureMeals = await knex("Meal").where(
+      "when",
+      ">",
+      knex.raw("NOW()")
+    );
+    res.json(futureMeals);
+  } catch (error) {
+    console.error("Error fetching future meals:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+apiRouter.get("/first-meals", async (req, res) => {
+  try {
+    const firstMeal = await knex("Meal").orderBy("id", "asc").limit(1);
+
+    if (firstMeal.length == 0) {
+      res.status(404).send("No meals found :(");
+    } else {
+      res.json(firstMeal);
+    }
+  } catch (error) {
+    console.error("Error fetching first meal:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+apiRouter.get("/past-meals", async (req, res) => {
+  try {
+    // MySQL's NOW() func could get the current date and time
+    const pastMeals = await knex("Meal").where("when", "<", knex.raw("NOW()"));
+    res.json(pastMeals);
+  } catch (error) {
+    console.error("Error fetching past meals:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+apiRouter.get("/last-meal", async (req, res) => {
+  try {
+    const lastMeal = await knex("Meal").orderBy("ID", "desc").limit(1);
+    if (lastMeal.length == 0) {
+      res.status(404).send("No meals found :(");
+    } else {
+      res.json(lastMeal);
+    }
+  } catch (error) {
+    console.error("Error fetching last meal:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ******** Sub-Routers ********
-// apiRouter.use("/nested", nestedRouter);
-apiRouter.use("/all-meals", allMeals);
-apiRouter.use("/future-meals", futureMeals);
-apiRouter.use("/past-meals", pastMeals);
-apiRouter.use("/first-meal", firstMeal);
-apiRouter.use("/last-meal", lastMeal);
-// ******** Sub-Routers ********
+apiRouter.use("/meals", meals);
+apiRouter.use("/reservations", reservations);
 
 app.use("/api", apiRouter);
 
