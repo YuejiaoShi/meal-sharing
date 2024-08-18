@@ -20,7 +20,11 @@ function handleFormatDateOrDatetime(fieldToFormat, value, format, res) {
 //  ----------- /api/meals | GET | Returns all meals -----------
 meals.get("/", async (req, res) => {
   try {
-    const meals = await knex("Meal").select("*");
+    const { maxPrice } = req.query;
+    let meals = await knex("Meal").select("*");
+    if (maxPrice) {
+      meals = meals.filter((meal) => meal.price <= maxPrice);
+    }
     res.json(meals);
   } catch (error) {
     const errMessage = error.message;
@@ -154,7 +158,12 @@ meals.put("/:id", async (req, res) => {
     fieldsToUpdate.location = location;
   }
   if (when !== undefined) {
-    fieldsToUpdate.when = handleFormatDateOrDatetime("when", when, "datetime", res);
+    fieldsToUpdate.when = handleFormatDateOrDatetime(
+      "when",
+      when,
+      "datetime",
+      res
+    );
   }
   if (max_reservations !== undefined) {
     fieldsToUpdate.max_reservations = max_reservations;
@@ -163,7 +172,12 @@ meals.put("/:id", async (req, res) => {
     fieldsToUpdate.price = price;
   }
   if (created_date !== undefined) {
-    fieldsToUpdate.created_date = handleFormatDateOrDatetime("created_date", created_date, "date", res);
+    fieldsToUpdate.created_date = handleFormatDateOrDatetime(
+      "created_date",
+      created_date,
+      "date",
+      res
+    );
   }
   if (Object.keys(fieldsToUpdate).length === 0) {
     return res.status(400).json({ error: "No fields provided for update." });
