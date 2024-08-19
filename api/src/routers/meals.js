@@ -20,7 +20,7 @@ function handleFormatDateOrDatetime(fieldToFormat, value, format, res) {
 //  ----------- /api/meals | GET | Returns all meals -----------
 meals.get("/", async (req, res) => {
   try {
-    const { maxPrice, availableReservations, title } = req.query;
+    const { maxPrice, availableReservations, title, dateAfter } = req.query;
     let meals = await knex("Meal").select("*");
     let query = knex("Meal")
       .leftJoin(
@@ -37,7 +37,8 @@ meals.get("/", async (req, res) => {
         "Meal.title",
         "Meal.max_reservations",
         knex.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
-        "Meal.price"
+        "Meal.price",
+        "Meal.when"
       );
 
     if (maxPrice) {
@@ -61,6 +62,20 @@ meals.get("/", async (req, res) => {
     }
     if (title) {
       query = query.where("Meal.title", "like", `%${title}%`);
+    }
+
+    if (dateAfter) {
+      const formattedDateAfter = handleFormatDateOrDatetime(
+        "dateAfter",
+        dateAfter,
+        "date",
+        res
+      );
+      if (formattedDateAfter) {
+        query = query.where("Meal.when", ">", new Date(formattedDateAfter));
+      } else {
+        return;
+      }
     }
 
     meals = await query;
