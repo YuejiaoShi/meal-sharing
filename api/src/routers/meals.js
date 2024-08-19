@@ -20,8 +20,14 @@ function handleFormatDateOrDatetime(fieldToFormat, value, format, res) {
 //  ----------- /api/meals | GET | Returns all meals -----------
 meals.get("/", async (req, res) => {
   try {
-    const { maxPrice, availableReservations, title, dateAfter, dateBefore } =
-      req.query;
+    const {
+      maxPrice,
+      availableReservations,
+      title,
+      dateAfter,
+      dateBefore,
+      limit,
+    } = req.query;
     let meals = await knex("Meal").select("*");
     let query = knex("Meal")
       .leftJoin(
@@ -61,6 +67,7 @@ meals.get("/", async (req, res) => {
         });
       }
     }
+
     if (title) {
       query = query.where("Meal.title", "like", `%${title}%`);
     }
@@ -90,6 +97,17 @@ meals.get("/", async (req, res) => {
         query = query.where("Meal.when", "<", new Date(formattedDateBefore));
       } else {
         return;
+      }
+    }
+
+    if (limit) {
+      const parsedLimit = parseInt(limit);
+      if (parsedLimit > 0) {
+        query = query.limit(parsedLimit);
+      } else {
+        return res.status(400).json({
+          error: "Invalid value for 'limit'. Must be a positive integer.",
+        });
       }
     }
 
