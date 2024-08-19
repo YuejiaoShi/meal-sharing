@@ -20,10 +20,40 @@ function handleFormatDateOrDatetime(fieldToFormat, value, format, res) {
 //  ----------- /api/meals | GET | Returns all meals -----------
 meals.get("/", async (req, res) => {
   try {
-    const { maxPrice } = req.query;
+    const { maxPrice, availableReservations } = req.query;
     let meals = await knex("Meal").select("*");
+    let query = knex("Meal")
+      .leftJoin(
+        knex.raw(`(
+        SELECT meal_id, COALESCE(SUM(number_of_guests), 0) AS total_guests
+        FROM Reservation
+        GROUP BY meal_id
+      ) AS Reserved`),
+        "Meal.id",
+        "Reserved.meal_id"
+      )
+      .select(
+        "Meal.id",
+        "Meal.title",
+        "Meal.max_reservations",
+        knex.raw("COALESCE(Reserved.total_guests, 0) AS total_guests")
+      );
+
     if (maxPrice) {
       meals = meals.filter((meal) => meal.price <= maxPrice);
+    }
+
+    if (availableReservations !== undefined) {
+      if (availableReservations === "true") {
+        query = query.where(
+          knex.raw("COALESCE(Reserved.total_guests, 0) < Meal.max_reservations")
+        );
+      } else if (availableReservations === "false") {
+        query = query.whereRaw(
+          "COALESCE(Reserved.total_guests, 0) >= Meal.max_reservations"
+        );
+      }
+      meals = await query;
     }
     res.json(meals);
   } catch (error) {
