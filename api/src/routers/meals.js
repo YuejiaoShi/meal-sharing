@@ -113,23 +113,26 @@ meals.get("/", async (req, res) => {
       }
     }
 
-    const validSortKeys = ["when", "max_reservations", "price"];
-    const validSortDirs = ["ASC", "DESC"];
+    if (sortKey || sortDir) {
+      if (sortDir && !sortKey) {
+        return res.status(400).json({
+          error: "sortDir must work with a soreKey.",
+        });
+      }
+      const validSortKeys = ["when", "max_reservations", "price"];
+      const validSortDirs = ["ASC", "DESC"];
 
-    const FormattedSortDir = sortDir ? sortDir.toUpperCase() : "ASC";
-    if (
-      validSortKeys.includes(sortKey) &&
-      validSortDirs.includes(FormattedSortDir)
-    ) {
-      query = query.orderBy(sortKey, FormattedSortDir);
-    } else {
-      return res.status(400).json({
-        error: "Invalid value for sort key or direction.",
-        Valid_Values: {
-          sortKeys: validSortKeys,
-          sortDirs: validSortDirs,
-        },
-      });
+      const FormattedSortDir = sortDir ? sortDir.toUpperCase() : "ASC";
+      if (
+        validSortKeys.includes(sortKey) &&
+        validSortDirs.includes(FormattedSortDir)
+      ) {
+        query = query.orderBy(sortKey, FormattedSortDir);
+      } else {
+        return res.status(400).json({
+          error: "Invalid value for sort key or direction.",
+        });
+      }
     }
 
     meals = await query;
