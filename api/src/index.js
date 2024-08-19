@@ -2,7 +2,6 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-// import nestedRouter from "./routers/nested.js";
 import knex from "knex";
 import meals from "./routers/meals.js";
 import reservations from "./routers/reservations.js";
