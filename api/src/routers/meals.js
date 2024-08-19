@@ -50,10 +50,12 @@ meals.get("/", async (req, res) => {
         "Meal.when"
       );
 
+    // maxPrice Parameter
     if (maxPrice) {
       query = query.where("Meal.price", "<=", maxPrice);
     }
 
+    // availableReservations Parameter
     if (availableReservations !== undefined) {
       if (availableReservations === "true") {
         query = query.where(
@@ -70,10 +72,12 @@ meals.get("/", async (req, res) => {
       }
     }
 
+    // title Parameter
     if (title) {
       query = query.where("Meal.title", "like", `%${title}%`);
     }
 
+    // dateAfter Parameter
     if (dateAfter) {
       const formattedDateAfter = handleFormatDateOrDatetime(
         "dateAfter",
@@ -87,7 +91,7 @@ meals.get("/", async (req, res) => {
         return;
       }
     }
-
+    // dateBefore Parameter
     if (dateBefore) {
       const formattedDateBefore = handleFormatDateOrDatetime(
         "dateBefore",
@@ -102,6 +106,7 @@ meals.get("/", async (req, res) => {
       }
     }
 
+    // limit Parameter
     if (limit) {
       const parsedLimit = parseInt(limit);
       if (parsedLimit > 0) {
@@ -113,6 +118,7 @@ meals.get("/", async (req, res) => {
       }
     }
 
+    // sortKey & sortDir Parameters
     if (sortKey || sortDir) {
       if (sortDir && !sortKey) {
         return res.status(400).json({
