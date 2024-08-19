@@ -27,6 +27,8 @@ meals.get("/", async (req, res) => {
       dateAfter,
       dateBefore,
       limit,
+      sortKey,
+      sortDir,
     } = req.query;
     let meals = await knex("Meal").select("*");
     let query = knex("Meal")
@@ -109,6 +111,25 @@ meals.get("/", async (req, res) => {
           error: "Invalid value for 'limit'. Must be a positive integer.",
         });
       }
+    }
+
+    const validSortKeys = ["when", "max_reservations", "price"];
+    const validSortDirs = ["ASC", "DESC"];
+
+    const FormattedSortDir = sortDir ? sortDir.toUpperCase() : "ASC";
+    if (
+      validSortKeys.includes(sortKey) &&
+      validSortDirs.includes(FormattedSortDir)
+    ) {
+      query = query.orderBy(sortKey, FormattedSortDir);
+    } else {
+      return res.status(400).json({
+        error: "Invalid value for sort key or direction.",
+        Valid_Values: {
+          sortKeys: validSortKeys,
+          sortDirs: validSortDirs,
+        },
+      });
     }
 
     meals = await query;
