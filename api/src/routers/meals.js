@@ -20,7 +20,8 @@ function handleFormatDateOrDatetime(fieldToFormat, value, format, res) {
 //  ----------- /api/meals | GET | Returns all meals -----------
 meals.get("/", async (req, res) => {
   try {
-    const { maxPrice, availableReservations, title, dateAfter } = req.query;
+    const { maxPrice, availableReservations, title, dateAfter, dateBefore } =
+      req.query;
     let meals = await knex("Meal").select("*");
     let query = knex("Meal")
       .leftJoin(
@@ -73,6 +74,20 @@ meals.get("/", async (req, res) => {
       );
       if (formattedDateAfter) {
         query = query.where("Meal.when", ">", new Date(formattedDateAfter));
+      } else {
+        return;
+      }
+    }
+
+    if (dateBefore) {
+      const formattedDateBefore = handleFormatDateOrDatetime(
+        "dateBefore",
+        dateBefore,
+        "date",
+        res
+      );
+      if (formattedDateBefore) {
+        query = query.where("Meal.when", "<", new Date(formattedDateBefore));
       } else {
         return;
       }
