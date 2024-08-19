@@ -44,17 +44,22 @@ meals.get("/", async (req, res) => {
       query = query.where("Meal.price", "<=", maxPrice);
     }
 
-    if (availableReservations !== undefined) {
-      if (availableReservations === "true") {
-        query = query.where(
-          knex.raw("COALESCE(Reserved.total_guests, 0) < Meal.max_reservations")
-        );
-      } else if (availableReservations === "false") {
-        query = query.whereRaw(
-          "COALESCE(Reserved.total_guests, 0) >= Meal.max_reservations"
-        );
-      }
+    if (availableReservations === "true") {
+      query = query.where(
+        knex.raw("COALESCE(Reserved.total_guests, 0) < Meal.max_reservations")
+      );
+    } else if (availableReservations === "false") {
+      query = query.whereRaw(
+        "COALESCE(Reserved.total_guests, 0) >= Meal.max_reservations"
+      );
+    } else {
+      res
+        .status(400)
+        .json({
+          error: "Invalid value for 'availableReservations' query parameter",
+        });
     }
+
     meals = await query;
     res.json(meals);
   } catch (error) {
