@@ -36,11 +36,12 @@ meals.get("/", async (req, res) => {
         "Meal.id",
         "Meal.title",
         "Meal.max_reservations",
-        knex.raw("COALESCE(Reserved.total_guests, 0) AS total_guests")
+        knex.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
+        "Meal.price"
       );
 
     if (maxPrice) {
-      meals = meals.filter((meal) => meal.price <= maxPrice);
+      query = query.where("Meal.price", "<=", maxPrice);
     }
 
     if (availableReservations !== undefined) {
@@ -53,8 +54,8 @@ meals.get("/", async (req, res) => {
           "COALESCE(Reserved.total_guests, 0) >= Meal.max_reservations"
         );
       }
-      meals = await query;
     }
+    meals = await query;
     res.json(meals);
   } catch (error) {
     const errMessage = error.message;
