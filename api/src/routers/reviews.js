@@ -108,10 +108,24 @@ reviews.get("/:id", async (req, res) => {
 // ----------- /api/reviews/:id | PUT | Updates the review by id -----------
 reviews.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-  const { meal_id } = req.body;
+  const { meal_id, created_date, ...otherFields } = req.body;
 
   if (Object.keys(req.body).length === 0) {
     return res.status(400).json({ error: "No fields provided for update." });
+  }
+
+  const fieldsToUpdate = { ...otherFields };
+
+  if (meal_id !== undefined) {
+    fieldsToUpdate.meal_id = meal_id;
+  }
+  if (created_date !== undefined) {
+    fieldsToUpdate.created_date = handleFormatDateOrDatetime(
+      "created_date",
+      created_date,
+      "date",
+      res
+    );
   }
 
   try {
@@ -122,7 +136,9 @@ reviews.put("/:id", async (req, res) => {
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
-    const updateReview = await knex("Review").where("id", id).update(req.body);
+    const updateReview = await knex("Review")
+      .where("id", id)
+      .update(fieldsToUpdate);
 
     if (updateReview > 0) {
       res.status(200).json({

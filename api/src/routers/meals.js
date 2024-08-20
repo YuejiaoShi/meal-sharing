@@ -253,26 +253,16 @@ meals.get("/:id", async (req, res) => {
 // ----------- /api/meals/:id | PUT | Updates the meal by id -----------
 meals.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-  const {
-    title,
-    description,
-    location,
-    when,
-    max_reservations,
-    price,
-    created_date,
-  } = req.body;
+  const { meal_id, created_date, when, ...otherFields } = req.body;
 
-  const fieldsToUpdate = {};
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: "No fields provided for update." });
+  }
 
-  if (title !== undefined) {
-    fieldsToUpdate.title = title;
-  }
-  if (description !== undefined) {
-    fieldsToUpdate.description = description;
-  }
-  if (location !== undefined) {
-    fieldsToUpdate.location = location;
+  const fieldsToUpdate = { ...otherFields };
+
+  if (meal_id !== undefined) {
+    fieldsToUpdate.meal_id = meal_id;
   }
   if (when !== undefined) {
     fieldsToUpdate.when = handleFormatDateOrDatetime(
@@ -282,12 +272,6 @@ meals.put("/:id", async (req, res) => {
       res
     );
   }
-  if (max_reservations !== undefined) {
-    fieldsToUpdate.max_reservations = max_reservations;
-  }
-  if (price !== undefined) {
-    fieldsToUpdate.price = price;
-  }
   if (created_date !== undefined) {
     fieldsToUpdate.created_date = handleFormatDateOrDatetime(
       "created_date",
@@ -295,9 +279,6 @@ meals.put("/:id", async (req, res) => {
       "date",
       res
     );
-  }
-  if (Object.keys(fieldsToUpdate).length === 0) {
-    return res.status(400).json({ error: "No fields provided for update." });
   }
 
   try {
