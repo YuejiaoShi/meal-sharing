@@ -79,11 +79,30 @@ reviews.post("/", async (req, res) => {
       stars,
       created_date: formattedCreatedDate,
     });
-  } catch (error) {
-    const errMessage = error.message;
-    res.status(500).json({ error: errMessage });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 // ----------- /api/reviews | POST | Adds a new review to the database -----------
+
+// ----------- /api/reviews/:id | GET | Returns the review by id -----------
+reviews.get("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).send("Invalid Id");
+  }
+  try {
+    const review = await knex("Review").where("id", id);
+
+    if (review) {
+      return res.json(review);
+    } else {
+      return res.status(404).send("Review Not Found");
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// ----------- /api/reservations/:id | GET | Returns the reservation by id -----------
 
 export default reviews;
