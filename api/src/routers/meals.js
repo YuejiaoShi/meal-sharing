@@ -340,4 +340,17 @@ meals.delete("/:id", async (req, res) => {
   }
 });
 // ----------- /api/meals/:id | DELETE | Deletes the meal by id -----------
+
+//  ------- /api/meals/:meal_id/reviews | GET | Returns all reviews for a specific meal. -----------
+meals.get("/:meal_id/reviews", async (req, res) => {
+  const { meal_id } = req.params;
+  try {
+    const reviews = await knex("Review").select("*").where({ meal_id });
+    res.json(reviews);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+//  ------- /api/meals/:meal_id/reviews | GET | Returns all reviews for a specific meal. -----------
+
 export default meals;
