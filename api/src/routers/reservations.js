@@ -128,42 +128,11 @@ reservations.get("/:id", async (req, res) => {
 // ----------- /api/reservations/:id | PUT | Updates the reservation by id -----------
 reservations.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-  const {
-    number_of_guests,
-    meal_id,
-    created_date,
-    contact_phonenumber,
-    contact_name,
-    contact_email,
-  } = req.body;
+  const { meal_id } = req.body;
 
-  const fieldsToUpdate = {};
-
-  if (number_of_guests !== undefined) {
-    fieldsToUpdate.number_of_guests = number_of_guests;
-}
-
-if (meal_id !== undefined) {
-    fieldsToUpdate.meal_id = meal_id;
-}
-
-if (contact_phonenumber !== undefined) {
-    fieldsToUpdate.contact_phonenumber = contact_phonenumber;
-}
-
-if (contact_name !== undefined) {
-    fieldsToUpdate.contact_name = contact_name;
-}
-
-if (contact_email !== undefined) {
-    fieldsToUpdate.contact_email = contact_email;
-}
-if (created_date !== undefined) {
-  fieldsToUpdate.created_date = handleFormatDateOrDatetime("created_date", created_date, "date", res);
-}
-if (Object.keys(fieldsToUpdate).length === 0) {
-  return res.status(400).json({ error: "No fields provided for update." });
-}
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: "No fields provided for update." });
+  }
 
   try {
     const meal = await knex("Meal").where({ id: meal_id }).first();
@@ -175,7 +144,7 @@ if (Object.keys(fieldsToUpdate).length === 0) {
 
     const updateReservation = await knex("Reservation")
       .where("id", id)
-      .update(fieldsToUpdate);
+      .update(req.body);
 
     if (updateReservation > 0) {
       res.status(200).json({
