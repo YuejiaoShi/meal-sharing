@@ -103,6 +103,67 @@ reviews.get("/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-// ----------- /api/reservations/:id | GET | Returns the reservation by id -----------
+// ----------- /api/reviews/:id | GET | Returns the review by id -----------
+
+// ----------- /api/reviews/:id | PUT | Updates the review by id -----------
+reviews.put("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { title, description, meal_id, stars, created_date } = req.body;
+
+  const fieldsToUpdate = {};
+
+  if (title !== undefined) {
+    fieldsToUpdate.title = title;
+  }
+
+  if (description !== undefined) {
+    fieldsToUpdate.description = description;
+  }
+
+  if (meal_id !== undefined) {
+    fieldsToUpdate.meal_id = meal_id;
+  }
+
+  if (stars !== undefined) {
+    fieldsToUpdate.stars = stars;
+  }
+
+  if (created_date !== undefined) {
+    fieldsToUpdate.created_date = handleFormatDateOrDatetime(
+      "created_date",
+      created_date,
+      "date",
+      res
+    );
+  }
+  if (Object.keys(fieldsToUpdate).length === 0) {
+    return res.status(400).json({ error: "No fields provided for update." });
+  }
+
+  try {
+    const meal = await knex("Meal").where({ id: meal_id }).first();
+    if (!meal) {
+      return res
+        .status(404)
+        .json({ error: "Invalid meal_id. Meal does not exist." });
+    }
+
+    const updateReview = await knex("Review")
+      .where("id", id)
+      .update(fieldsToUpdate);
+
+    if (updateReview > 0) {
+      res.status(200).json({
+        message: "Review updated :)",
+        review: await knex("Review").where("id", id),
+      });
+    } else {
+      res.status(404).json({ error: "Review Not Found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// ----------- /api/reviews/:id | PUT | Updates the review by id -----------
 
 export default reviews;
