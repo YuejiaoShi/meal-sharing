@@ -166,4 +166,24 @@ reviews.put("/:id", async (req, res) => {
 });
 // ----------- /api/reviews/:id | PUT | Updates the review by id -----------
 
+// ----------- /api/reviews/:id | DELETE | Deletes the review by id -----------
+reviews.delete("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) {
+    return res.status(400).send("Invalid Id");
+  }
+  try {
+    const deletedReview = await knex("Review").where("id", id).del();
+
+    if (deletedReview) {
+      return res.status(200).send("Review deleted :)");
+    } else {
+      return res.status(404).send("Review Not Found");
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// ----------- /api/reviews/:id | DELETE | Deletes the review by id -----------
+
 export default reviews;
