@@ -60,7 +60,6 @@ reservations.post("/", async (req, res) => {
     });
   }
 
-  // Format created_date (date)
   const formattedCreatedDate = handleFormatDateOrDatetime(
     "created_date",
     created_date,
@@ -69,7 +68,6 @@ reservations.post("/", async (req, res) => {
   );
 
   try {
-    // Check if the provided meal_id exists in the Meal table
     const meal = await knex("Meal").where({ id: meal_id }).first();
     if (!meal) {
       return res
@@ -77,26 +75,42 @@ reservations.post("/", async (req, res) => {
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
-    const [newReservation] = await knex("Reservation").insert({
-      number_of_guests,
-      meal_id,
-      created_date: formattedCreatedDate,
-      contact_phonenumber,
-      contact_name,
-      contact_email,
-    });
+    const total_guests_before_post = Number(
+      (
+        await knex("Reservation")
+          .where("meal_id", meal_id)
+          .sum("number_of_guests as total_guests")
+          .first()
+      ).total_guests || 0
+    );
 
-    // Respond with the new added reservation
-    res.status(201).json({
-      message: `Reservation was added :)`,
-      id: newReservation,
-      number_of_guests,
-      meal_id,
-      created_date: formattedCreatedDate,
-      contact_phonenumber,
-      contact_name,
-      contact_email,
-    });
+    if (number_of_guests !== undefined) {
+      if (total_guests_before_post + number_of_guests > meal.max_reservations) {
+        return res
+          .status(400)
+          .json({ error: "Not enough available spots for this meal." });
+      }
+      const [newReservation] = await knex("Reservation").insert({
+        number_of_guests,
+        meal_id,
+        created_date: formattedCreatedDate,
+        contact_phonenumber,
+        contact_name,
+        contact_email,
+      });
+
+      // Respond with the new added reservation
+      res.status(201).json({
+        message: `Reservation was added :)`,
+        id: newReservation,
+        number_of_guests,
+        meal_id,
+        created_date: formattedCreatedDate,
+        contact_phonenumber,
+        contact_name,
+        contact_email,
+      });
+    }
   } catch (error) {
     const errMessage = error.message;
     res.status(500).json({ error: errMessage });
@@ -128,7 +142,7 @@ reservations.get("/:id", async (req, res) => {
 // ----------- /api/reservations/:id | PUT | Updates the reservation by id -----------
 reservations.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-  const { meal_id, created_date, ...otherFields } = req.body;
+  const { meal_id, created_date, number_of_guests, ...otherFields } = req.body;
 
   if (Object.keys(req.body).length === 0) {
     return res.status(400).json({ error: "No fields provided for update." });
@@ -154,6 +168,24 @@ reservations.put("/:id", async (req, res) => {
       return res
         .status(404)
         .json({ error: "Invalid meal_id. Meal does not exist." });
+    }
+
+    const total_guests = Number(
+      (
+        await knex("Reservation")
+          .where("meal_id", meal_id)
+          .sum("number_of_guests as total_guests")
+          .first()
+      ).total_guests || 0
+    );
+
+    if (number_of_guests !== undefined) {
+      if (total_guests + number_of_guests > meal.max_reservations) {
+        return res
+          .status(400)
+          .json({ error: "Not enough available spots for this meal." });
+      }
+      fieldsToUpdate.number_of_guests = number_of_guests;
     }
 
     const updateReservation = await knex("Reservation")
