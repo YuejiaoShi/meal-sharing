@@ -1,21 +1,8 @@
 import express from "express";
 import knex from "../database_client.js";
+import handleFormatDateOrDatetime from "../utils/helper.js";
 
 const reviews = express.Router();
-
-// Handle date or dateime formatting
-function handleFormatDateOrDatetime(fieldToFormat, value, format, res) {
-  const parsedDate = new Date(value);
-  if (isNaN(parsedDate.getTime())) {
-    return res.status(400).json({
-      error: `Invalid date format for '${fieldToFormat}'. Use ${format === "date" ? "YYYY-MM-DD" : "YYYY-MM-DD HH:MM:SS"} format.`,
-    });
-  }
-  return parsedDate
-    .toISOString()
-    .slice(0, format === "date" ? 10 : 19)
-    .replace("T", " ");
-}
 
 //  ----------- /api/reviews | GET | Returns all reviews -----------
 reviews.get("/", async (req, res) => {
