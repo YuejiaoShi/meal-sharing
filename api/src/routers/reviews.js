@@ -150,11 +150,10 @@ reviews.delete("/:id", async (req, res) => {
   try {
     const deletedReview = await knex("Review").where("id", id).del();
 
-    if (deletedReview) {
-      return res.status(200).send("Review deleted :)");
-    } else {
+    if (!deletedReview) {
       return res.status(404).send("Review Not Found");
     }
+    return res.status(200).send("Review deleted :)");
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

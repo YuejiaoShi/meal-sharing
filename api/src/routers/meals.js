@@ -43,20 +43,20 @@ meals.get("/", async (req, res) => {
     }
 
     // availableReservations Parameter
-    if (availableReservations !== undefined) {
-      if (availableReservations === "true") {
-        query = query.where(
-          knex.raw("COALESCE(Reserved.total_guests, 0) < Meal.max_reservations")
-        );
-      } else if (availableReservations === "false") {
-        query = query.whereRaw(
-          "COALESCE(Reserved.total_guests, 0) >= Meal.max_reservations"
-        );
-      } else {
-        res.status(400).json({
-          error: "Invalid value for 'availableReservations' query parameter",
-        });
-      }
+    if (availableReservations === undefined) {
+      return res.status(400).json({
+        error: "Invalid value for 'availableReservations' query parameter",
+      });
+    }
+    if (availableReservations === "true") {
+      query = query.where(
+        knex.raw("COALESCE(Reserved.total_guests, 0) < Meal.max_reservations")
+      );
+    }
+    if (availableReservations === "false") {
+      query = query.whereRaw(
+        "COALESCE(Reserved.total_guests, 0) >= Meal.max_reservations"
+      );
     }
 
     // title Parameter
@@ -72,11 +72,10 @@ meals.get("/", async (req, res) => {
         "date",
         res
       );
-      if (formattedDateAfter) {
-        query = query.where("Meal.when", ">", new Date(formattedDateAfter));
-      } else {
+      if (!formattedDateAfter) {
         return;
       }
+      query = query.where("Meal.when", ">", new Date(formattedDateAfter));
     }
     // dateBefore Parameter
     if (dateBefore) {
@@ -86,11 +85,10 @@ meals.get("/", async (req, res) => {
         "date",
         res
       );
-      if (formattedDateBefore) {
-        query = query.where("Meal.when", "<", new Date(formattedDateBefore));
-      } else {
+      if (!formattedDateBefore) {
         return;
       }
+      query = query.where("Meal.when", "<", new Date(formattedDateBefore));
     }
 
     // limit Parameter
@@ -297,11 +295,10 @@ meals.delete("/:id", async (req, res) => {
   try {
     const deletedMeal = await knex("Meal").where("id", id).del();
 
-    if (deletedMeal) {
-      return res.status(200).send("Meal deleted :)");
-    } else {
+    if (!deletedMeal) {
       return res.status(404).send("Meal Not Found");
     }
+    return res.status(200).send("Meal deleted :)");
   } catch (error) {
     const errMessage = error.message;
     res.status(500).json({ error: errMessage });

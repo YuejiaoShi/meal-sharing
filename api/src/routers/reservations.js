@@ -203,11 +203,10 @@ reservations.delete("/:id", async (req, res) => {
   try {
     const deletedReservation = await knex("Reservation").where("id", id).del();
 
-    if (deletedReservation) {
-      return res.status(200).send("Reservation deleted :)");
-    } else {
+    if (!deletedReservation) {
       return res.status(404).send("Reservation Not Found");
     }
+    return res.status(200).send("Reservation deleted :)");
   } catch (error) {
     const errMessage = error.message;
     res.status(500).json({ error: errMessage });
