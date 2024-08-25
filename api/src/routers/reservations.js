@@ -1,21 +1,8 @@
 import express from "express";
 import knex from "../database_client.js";
+import handleFormatDateOrDatetime from "../utils/helper.js";
 
 const reservations = express.Router();
-
-// Handle date or dateime formatting
-function handleFormatDateOrDatetime(fieldToFormat, value, format, res) {
-  const parsedDate = new Date(value);
-  if (isNaN(parsedDate.getTime())) {
-    return res.status(400).json({
-      error: `Invalid date format for '${fieldToFormat}'. Use ${format === "date" ? "YYYY-MM-DD" : "YYYY-MM-DD HH:MM:SS"} format.`,
-    });
-  }
-  return parsedDate
-    .toISOString()
-    .slice(0, format === "date" ? 10 : 19)
-    .replace("T", " ");
-}
 
 //  ----------- /api/reservations | GET | Returns all Reservations -----------
 reservations.get("/", async (req, res) => {
@@ -60,7 +47,6 @@ reservations.post("/", async (req, res) => {
     });
   }
 
-  // Format created_date (date)
   const formattedCreatedDate = handleFormatDateOrDatetime(
     "created_date",
     created_date,
@@ -69,7 +55,6 @@ reservations.post("/", async (req, res) => {
   );
 
   try {
-    // Check if the provided meal_id exists in the Meal table
     const meal = await knex("Meal").where({ id: meal_id }).first();
     if (!meal) {
       return res
@@ -77,26 +62,42 @@ reservations.post("/", async (req, res) => {
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
-    const [newReservation] = await knex("Reservation").insert({
-      number_of_guests,
-      meal_id,
-      created_date: formattedCreatedDate,
-      contact_phonenumber,
-      contact_name,
-      contact_email,
-    });
+    const total_guests_before_post = Number(
+      (
+        await knex("Reservation")
+          .where("meal_id", meal_id)
+          .sum("number_of_guests as total_guests")
+          .first()
+      ).total_guests || 0
+    );
 
-    // Respond with the new added reservation
-    res.status(201).json({
-      message: `Reservation was added :)`,
-      id: newReservation,
-      number_of_guests,
-      meal_id,
-      created_date: formattedCreatedDate,
-      contact_phonenumber,
-      contact_name,
-      contact_email,
-    });
+    if (number_of_guests !== undefined) {
+      if (total_guests_before_post + number_of_guests > meal.max_reservations) {
+        return res
+          .status(400)
+          .json({ error: "Not enough available spots for this meal." });
+      }
+      const [newReservation] = await knex("Reservation").insert({
+        number_of_guests,
+        meal_id,
+        created_date: formattedCreatedDate,
+        contact_phonenumber,
+        contact_name,
+        contact_email,
+      });
+
+      // Respond with the new added reservation
+      res.status(201).json({
+        message: `Reservation was added :)`,
+        id: newReservation,
+        number_of_guests,
+        meal_id,
+        created_date: formattedCreatedDate,
+        contact_phonenumber,
+        contact_name,
+        contact_email,
+      });
+    }
   } catch (error) {
     const errMessage = error.message;
     res.status(500).json({ error: errMessage });
@@ -128,42 +129,25 @@ reservations.get("/:id", async (req, res) => {
 // ----------- /api/reservations/:id | PUT | Updates the reservation by id -----------
 reservations.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
-  const {
-    number_of_guests,
-    meal_id,
-    created_date,
-    contact_phonenumber,
-    contact_name,
-    contact_email,
-  } = req.body;
+  const { meal_id, created_date, number_of_guests, ...otherFields } = req.body;
 
-  const fieldsToUpdate = {};
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: "No fields provided for update." });
+  }
 
-  if (number_of_guests !== undefined) {
-    fieldsToUpdate.number_of_guests = number_of_guests;
-}
+  const fieldsToUpdate = { ...otherFields };
 
-if (meal_id !== undefined) {
+  if (meal_id !== undefined) {
     fieldsToUpdate.meal_id = meal_id;
-}
-
-if (contact_phonenumber !== undefined) {
-    fieldsToUpdate.contact_phonenumber = contact_phonenumber;
-}
-
-if (contact_name !== undefined) {
-    fieldsToUpdate.contact_name = contact_name;
-}
-
-if (contact_email !== undefined) {
-    fieldsToUpdate.contact_email = contact_email;
-}
-if (created_date !== undefined) {
-  fieldsToUpdate.created_date = handleFormatDateOrDatetime("created_date", created_date, "date", res);
-}
-if (Object.keys(fieldsToUpdate).length === 0) {
-  return res.status(400).json({ error: "No fields provided for update." });
-}
+  }
+  if (created_date !== undefined) {
+    fieldsToUpdate.created_date = handleFormatDateOrDatetime(
+      "created_date",
+      created_date,
+      "date",
+      res
+    );
+  }
 
   try {
     const meal = await knex("Meal").where({ id: meal_id }).first();
@@ -171,6 +155,24 @@ if (Object.keys(fieldsToUpdate).length === 0) {
       return res
         .status(404)
         .json({ error: "Invalid meal_id. Meal does not exist." });
+    }
+
+    const total_guests = Number(
+      (
+        await knex("Reservation")
+          .where("meal_id", meal_id)
+          .sum("number_of_guests as total_guests")
+          .first()
+      ).total_guests || 0
+    );
+
+    if (number_of_guests !== undefined) {
+      if (total_guests + number_of_guests > meal.max_reservations) {
+        return res
+          .status(400)
+          .json({ error: "Not enough available spots for this meal." });
+      }
+      fieldsToUpdate.number_of_guests = number_of_guests;
     }
 
     const updateReservation = await knex("Reservation")
@@ -201,11 +203,10 @@ reservations.delete("/:id", async (req, res) => {
   try {
     const deletedReservation = await knex("Reservation").where("id", id).del();
 
-    if (deletedReservation) {
-      return res.status(200).send("Reservation deleted :)");
-    } else {
+    if (!deletedReservation) {
       return res.status(404).send("Reservation Not Found");
     }
+    return res.status(200).send("Reservation deleted :)");
   } catch (error) {
     const errMessage = error.message;
     res.status(500).json({ error: errMessage });
