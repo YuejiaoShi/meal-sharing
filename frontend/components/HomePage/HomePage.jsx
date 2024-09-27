@@ -1,3 +1,4 @@
+"use client";
 import MealsList from "../MealsList";
 
 function HomePage() {
