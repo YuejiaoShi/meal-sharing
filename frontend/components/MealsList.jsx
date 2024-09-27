@@ -1,6 +1,6 @@
 "use client";
+import { fetchMeals } from "@/context/fetchMeals";
 import { useEffect, useState } from "react";
-import { fetchMeals } from "./context/fetchMeals";
 
 function MealsList() {
   const [meals, setMeals] = useState([]);
