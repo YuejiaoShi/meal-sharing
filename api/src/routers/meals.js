@@ -1,5 +1,5 @@
 import express from "express";
-import knex from "../database_client.js";
+import DBConnection from "../database_client.js";
 import handleFormatDateOrDatetime from "../utils/helper.js";
 
 const meals = express.Router();
@@ -17,10 +17,10 @@ meals.get("/", async (req, res) => {
       sortKey,
       sortDir,
     } = req.query;
-    let meals = await knex("Meal").select("*");
-    let query = knex("Meal")
+    let meals = await DBConnection("Meal").select("*");
+    let query = DBConnection("Meal")
       .leftJoin(
-        knex.raw(`(
+        DBConnection.raw(`(
         SELECT meal_id, COALESCE(SUM(number_of_guests), 0) AS total_guests
         FROM Reservation
         GROUP BY meal_id
@@ -32,7 +32,7 @@ meals.get("/", async (req, res) => {
         "Meal.id",
         "Meal.title",
         "Meal.max_reservations",
-        knex.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
+        DBConnection.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
         "Meal.price",
         "Meal.when"
       );
@@ -50,7 +50,7 @@ meals.get("/", async (req, res) => {
     }
     if (availableReservations === "true") {
       query = query.where(
-        knex.raw("COALESCE(Reserved.total_guests, 0) < Meal.max_reservations")
+        DBConnection.raw("COALESCE(Reserved.total_guests, 0) < Meal.max_reservations")
       );
     }
     if (availableReservations === "false") {
@@ -185,7 +185,7 @@ meals.post("/", async (req, res) => {
   );
 
   try {
-    const [newMeal] = await knex("Meal").insert({
+    const [newMeal] = await DBConnection("Meal").insert({
       title,
       description,
       location,
@@ -221,7 +221,7 @@ meals.get("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const meal = await knex("Meal").where("id", id);
+    const meal = await DBConnection("Meal").where("id", id);
 
     if (meal) {
       return res.json(meal);
@@ -267,14 +267,14 @@ meals.put("/:id", async (req, res) => {
   }
 
   try {
-    const updateMeal = await knex("Meal")
+    const updateMeal = await DBConnection("Meal")
       .where("id", id)
       .update(fieldsToUpdate);
 
     if (updateMeal > 0) {
       res.status(200).json({
         message: "Meal updated :)",
-        meal: await knex("Meal").where("id", id),
+        meal: await DBConnection("Meal").where("id", id),
       });
     } else {
       res.status(404).json({ error: "Meal Not Found" });
@@ -293,7 +293,7 @@ meals.delete("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const deletedMeal = await knex("Meal").where("id", id).del();
+    const deletedMeal = await DBConnection("Meal").where("id", id).del();
 
     if (!deletedMeal) {
       return res.status(404).send("Meal Not Found");
@@ -310,7 +310,7 @@ meals.delete("/:id", async (req, res) => {
 meals.get("/:meal_id/reviews", async (req, res) => {
   const { meal_id } = req.params;
   try {
-    const reviews = await knex("Review").select("*").where({ meal_id });
+    const reviews = await DBConnection("Review").select("*").where({ meal_id });
     res.json(reviews);
   } catch (err) {
     res.status(500).json({ error: err.message });
