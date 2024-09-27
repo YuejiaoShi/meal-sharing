@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { fetchMeals } from "./context/fetchMeals";
 
 function MealsList() {
   const [meals, setMeals] = useState([]);
@@ -7,14 +8,10 @@ function MealsList() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchMeals = async () => {
+    const loadMeals = async () => {
       try {
-        const res = await fetch("http://localhost:3001/api/all-meals");
-        if (!res.ok) {
-          throw new Error(`Failed to fetch meals. Status: ${res.status}`);
-        }
-        const data = await res.json();
-        setMeals(data);
+        const mealsData = await fetchMeals();
+        setMeals(mealsData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -22,13 +19,23 @@ function MealsList() {
       }
     };
 
-    fetchMeals();
+    loadMeals();
   }, []);
 
   return (
     <div>
       {meals.map((meal) => (
-        <p>{meal.title}</p>
+        <div key={meal.id}>
+          <p>
+            <strong>Title:</strong> {meal.title}
+          </p>
+          <p>
+            <strong>Description:</strong> {meal.description}
+          </p>
+          <p>
+            <strong>Price:</strong> ${meal.price}
+          </p>
+        </div>
       ))}
     </div>
   );
