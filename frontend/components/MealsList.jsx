@@ -1,6 +1,7 @@
 "use client";
 import { fetchMeals } from "@/context/fetchMeals";
 import { useEffect, useState } from "react";
+import Meal from "./Meal";
 
 function MealsList() {
   const [meals, setMeals] = useState([]);
@@ -25,17 +26,7 @@ function MealsList() {
   return (
     <div>
       {meals.map((meal) => (
-        <div key={meal.id}>
-          <p>
-            <strong>Title:</strong> {meal.title}
-          </p>
-          <p>
-            <strong>Description:</strong> {meal.description}
-          </p>
-          <p>
-            <strong>Price:</strong> ${meal.price}
-          </p>
-        </div>
+        <Meal meal={meal} key={meal.id} />
       ))}
     </div>
   );
