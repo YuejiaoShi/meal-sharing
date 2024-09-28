@@ -54,8 +54,8 @@ function NavBar() {
       <ListItem>
         <ListItemButton
           component={Link}
-          href="/menu"
-          className={getButtonClasses("/menu")}
+          href="/meals"
+          className={getButtonClasses("/meals")}
         >
           Menu
         </ListItemButton>
@@ -81,7 +81,7 @@ function NavBar() {
             <img
               src="/favicon-white.png"
               alt="logo-white"
-              className="w-10 h-10"
+              className="w-8 h-8"
             />
           </IconButton>
           <Typography variant="h6" className="text-white ml-0">
