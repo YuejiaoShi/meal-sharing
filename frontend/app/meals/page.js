@@ -1,6 +1,6 @@
 import MealsList from "@/components/MealsList";
 
-function MealPage() {
+function MealsPage() {
   return (
     <div>
       <MealsList />
@@ -8,4 +8,4 @@ function MealPage() {
   );
 }
 
-export default MealPage;
+export default MealsPage;
