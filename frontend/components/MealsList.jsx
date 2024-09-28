@@ -3,7 +3,7 @@ import { fetchMeals } from "@/context/fetchMeals";
 import { useEffect, useState } from "react";
 import Meal from "./Meal";
 
-function MealsList() {
+function MealsList({ previewCount = 0 }) {
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,9 +23,12 @@ function MealsList() {
     loadMeals();
   }, []);
 
+  const mealsToDisplay =
+    previewCount > 0 ? meals.slice(0, previewCount) : meals;
+
   return (
     <div>
-      {meals.map((meal) => (
+      {mealsToDisplay.map((meal) => (
         <Meal meal={meal} key={meal.id} />
       ))}
     </div>
