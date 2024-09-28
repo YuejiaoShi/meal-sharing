@@ -62,6 +62,22 @@ reservations.post("/", async (req, res) => {
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
+    const existingReservation = await DBConnection("Reservation")
+      .where({
+        meal_id: meal_id,
+        contact_email: contact_email,
+        created_date: created_date,
+      })
+      .first();
+
+    if (existingReservation) {
+      return res
+        .status(400)
+        .json({
+          error: "A reservation with this email already exists for this meal.",
+        });
+    }
+
     const total_guests_before_post = Number(
       (
         await DBConnection("Reservation")
@@ -201,7 +217,9 @@ reservations.delete("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const deletedReservation = await DBConnection("Reservation").where("id", id).del();
+    const deletedReservation = await DBConnection("Reservation")
+      .where("id", id)
+      .del();
 
     if (!deletedReservation) {
       return res.status(404).send("Reservation Not Found");
