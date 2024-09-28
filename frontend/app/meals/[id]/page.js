@@ -1,14 +1,17 @@
 "use client";
+
 import { fetchMealById } from "@/context/fetchMealById";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
+import ReservationModal from "@/components/Meal/ReservationModal";
 
 function MealByID() {
   const { id } = useParams();
   const [meal, setMeal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchMeal = async () => {
@@ -25,6 +28,10 @@ function MealByID() {
 
     fetchMeal();
   }, [id]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (!meal) {
     return <div>Meal not found.</div>;
@@ -49,10 +56,18 @@ function MealByID() {
       <p>
         <strong>Price:</strong> ${meal.price}
       </p>
-      <p>
-        <strong>Created Date:</strong>{" "}
-        {format(new Date(meal.when), "MMMM dd, yyyy")}
-      </p>
+      <button
+        onClick={() => setModalOpen(true)}
+        className="bg-primary text-white py-2 px-4 rounded"
+      >
+        Book Seat
+      </button>
+
+      <ReservationModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        mealId={id}
+      />
     </div>
   );
 }
