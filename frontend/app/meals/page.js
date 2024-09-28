@@ -1,4 +1,4 @@
-import MealsList from "@/components/MealsList";
+import MealsList from "@/components/Meal/MealsList";
 
 function MealsPage() {
   return (

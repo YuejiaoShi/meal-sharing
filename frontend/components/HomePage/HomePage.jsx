@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import MealsList from "../MealsList";
+import MealsList from "../Meal/MealsList";
 
 function HomePage() {
   return (
