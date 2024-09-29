@@ -3,6 +3,7 @@ import "./globals.css";
 import Footer from "@/components/ui/Footer";
 import NavBar from "@/components/ui/Navbar";
 import ThemeProviderClient from "@/context/themeContext";
+import Main from "@/components/ui/Main";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -20,8 +21,6 @@ export const metadata = {
   description: "Meal Sharing App",
 };
 
-const mode = "light";
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -31,7 +30,7 @@ export default function RootLayout({ children }) {
         <ThemeProviderClient>
           <div className="flex flex-col min-h-screen" color="primary">
             <NavBar />
-            <main className="flex-grow">{children}</main>
+            <Main>{children}</Main>
           </div>
           <Footer />
         </ThemeProviderClient>
