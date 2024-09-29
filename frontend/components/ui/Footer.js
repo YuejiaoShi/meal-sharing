@@ -1,3 +1,5 @@
+"use client";
+import { useThemeContext } from "@/context/themeContext";
 import Link from "next/link";
 
 const footerSections = [
@@ -54,16 +56,22 @@ const socialMediaLinks = [
 ];
 
 const Footer = () => {
+  const theme = useThemeContext();
+
   return (
-    <footer className="bg-primary text-white py-12">
+    <footer
+      className={`${
+        theme.isDarkMode
+          ? "bg-darkMode-background text-darkMode-text"
+          : "bg-lightMode-background text-lightMode-text"
+      } py-12`}
+    >
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-4 sm:px-6 lg:px-8">
-        {" "}
-        {/* Adjust the padding here */}
         <div className="col-span-1 flex flex-col items-start">
           <img
-            src="/favicon-white.png"
+            src={theme.isDarkMode ? "/favicon-white.png" : "/favicon.ico"}
             alt="Restaurant Logo"
-            className="w-16 h-auto mb-4 block mx-auto"
+            className="w-16 h-auto mb-4 block"
           />
           <p className="mb-4">
             Welcome to Meal Sharing. Join us for delicious meals and great

@@ -12,11 +12,14 @@ import {
   List,
   Drawer,
   ListItemButton,
+  useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "./ThemeToogle";
+import { useThemeContext } from "@/context/themeContext";
 
 function NavBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -30,6 +33,8 @@ function NavBar() {
   const getButtonClasses = (path) => {
     return pathname === path ? "font-bold text-base" : "";
   };
+
+  const currentTheme = useThemeContext();
 
   const drawer = (
     <List>
@@ -69,22 +74,44 @@ function NavBar() {
           Contact
         </ListItemButton>
       </ListItem>
-      <ListItem></ListItem>
+      <ListItem>
+        <ThemeToggle />
+      </ListItem>
     </List>
   );
 
+  const theme = useTheme();
+
   return (
-    <AppBar position="static" sx={{ backgroundColor: "#145a32" }}>
-      <Toolbar className="flex justify-between items-center">
-        <Link href="/" passHref className="flex items-center space-x-2">
+    <AppBar
+      position="static"
+      sx={{
+        backgroundColor: currentTheme.isDarkMode
+          ? theme.palette.custom.darkColor
+          : theme.palette.custom.lightColor,
+        color: currentTheme.isDarkMode
+          ? "white"
+          : theme.palette.custom.darkColor,
+      }}
+    >
+      <Toolbar
+        className={`${
+          currentTheme.isDarkMode
+            ? "bg-darkMode-background text-darkMode-text"
+            : "bg-lightMode-background text-lightMode-text"
+        } flex justify-between items-center`}
+      >
+        <Link href="/" passHref className={`flex items-center space-x-2 `}>
           <IconButton color="inherit" aria-label="logo">
             <img
-              src="/favicon-white.png"
-              alt="logo-white"
+              src={`${
+                currentTheme.isDarkMode ? "/favicon-white.png" : "/favicon.ico"
+              }`}
+              alt="Homepage logo"
               className="w-8 h-8"
             />
           </IconButton>
-          <Typography variant="h6" className="text-white ml-0">
+          <Typography variant="h6" className="text- ml-0">
             Meal Sharing
           </Typography>
         </Link>
@@ -99,6 +126,7 @@ function NavBar() {
           </>
         ) : (
           <Stack direction="row" spacing={2}>
+            <ThemeToggle />
             <Button
               color="inherit"
               component={Link}
