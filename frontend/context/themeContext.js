@@ -8,7 +8,7 @@ export const lightTheme = createTheme({
   palette: {
     mode: "light",
     custom: {
-      darkColor: "#0c4022", // Define a custom dark color
+      darkColor: "#141e1b", // Define a custom dark color
       lightColor: "#9bebc9", // Define a custom light color
     },
   },

@@ -1,4 +1,4 @@
-"use client"; // This line is important for Next.js app routing
+"use client";
 
 import {
   AppBar,
