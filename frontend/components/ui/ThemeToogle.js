@@ -1,15 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import { useThemeContext } from "@/context/themeContext";
+
+const modeIcons = {
+  lightIcon: "/modeIcons/light-mode.png",
+  darkIcon: "/modeIcons/dark-mode.png",
+};
 
 export default function ThemeToggle() {
   const theme = useThemeContext();
 
   return (
     <Button onClick={theme.handleThemeChange}>
-      {theme.isDarkMode ? "☀️" : "🌙"}
+      <img
+        src={theme.isDarkMode ? modeIcons.lightIcon : modeIcons.darkIcon}
+        alt="mode toggle"
+        className="w-6 h-6"
+      />
     </Button>
   );
 }
