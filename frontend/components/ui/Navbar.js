@@ -36,44 +36,26 @@ function NavBar() {
 
   const currentTheme = useThemeContext();
 
+  const menuItems = [
+    { href: "/", label: "Home" },
+    { href: "/about", label: "About Us" },
+    { href: "/meals", label: "Menu" },
+    { href: "/contact", label: "Contact" },
+  ];
+
   const drawer = (
     <List>
-      <ListItem>
-        <ListItemButton
-          component={Link}
-          href="/"
-          className={getButtonClasses("/")}
-        >
-          Home
-        </ListItemButton>
-      </ListItem>
-      <ListItem>
-        <ListItemButton
-          component={Link}
-          href="/about"
-          className={getButtonClasses("/about")}
-        >
-          About Us
-        </ListItemButton>
-      </ListItem>
-      <ListItem>
-        <ListItemButton
-          component={Link}
-          href="/meals"
-          className={getButtonClasses("/meals")}
-        >
-          Menu
-        </ListItemButton>
-      </ListItem>
-      <ListItem>
-        <ListItemButton
-          component={Link}
-          href="/contact"
-          className={getButtonClasses("/contact")}
-        >
-          Contact
-        </ListItemButton>
-      </ListItem>
+      {menuItems.map((item) => (
+        <ListItem key={item.href}>
+          <ListItemButton
+            component={Link}
+            href={item.href}
+            className={getButtonClasses(item.href)}
+          >
+            {item.label}
+          </ListItemButton>
+        </ListItem>
+      ))}
       <ListItem>
         <ThemeToggle />
       </ListItem>
