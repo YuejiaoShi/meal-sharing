@@ -10,7 +10,7 @@ module.exports = {
       colors: {
         primary: "#0c4022",
         darkMode: {
-          background: "#145a32",
+          background: "#022511",
           text: "#ffffff",
         },
         lightMode: {

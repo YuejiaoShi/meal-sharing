@@ -7,7 +7,7 @@ const Main = ({ children }) => {
   const contentClasses =
     theme.palette.mode === "light"
       ? "bg-white text-black"
-      : "bg-[#022511] text-white";
+      : "bg-[#0c4022] text-white";
 
   return <main className={`flex-grow ${contentClasses}`}>{children}</main>;
 };
