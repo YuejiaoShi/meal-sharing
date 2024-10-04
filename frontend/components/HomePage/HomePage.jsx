@@ -7,11 +7,7 @@ function HomePage() {
     <div>
       <h1>Welcome to the Home Page</h1>
       <MealsList previewCount={3} />
-      <Link
-        href="/meals"
-        className="text-blue-700"
-        onClick={() => (window.location.href = "/meals")}
-      >
+      <Link href="/meals" className="text-blue-700">
         more meals...
       </Link>
     </div>
