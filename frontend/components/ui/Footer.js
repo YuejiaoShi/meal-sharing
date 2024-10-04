@@ -62,8 +62,8 @@ const Footer = () => {
     <footer
       className={`${
         theme.isDarkMode
-          ? "bg-darkMode-background text-darkMode-text"
-          : "bg-lightMode-background text-lightMode-text"
+          ? "bg-darkMode-bg text-darkMode-text"
+          : "bg-lightMode-bg text-lightMode-text"
       } py-12`}
     >
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 px-4 sm:px-6 lg:px-8">

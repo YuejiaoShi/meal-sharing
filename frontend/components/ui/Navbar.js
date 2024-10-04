@@ -79,8 +79,8 @@ function NavBar() {
       <Toolbar
         className={`${
           currentTheme.isDarkMode
-            ? "bg-darkMode-background text-darkMode-text"
-            : "bg-lightMode-background text-lightMode-text"
+            ? "bg-darkMode-bg text-darkMode-text"
+            : "bg-lightMode-bg text-lightMode-text"
         } flex justify-between items-center`}
       >
         <Link href="/" passHref className={`flex items-center space-x-2 `}>

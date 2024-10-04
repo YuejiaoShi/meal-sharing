@@ -10,11 +10,11 @@ module.exports = {
       colors: {
         primary: "#0c4022",
         darkMode: {
-          background: "#022511",
+          bg: "#485d58",
           text: "#ffffff",
         },
         lightMode: {
-          background: "#9bebc9",
+          bg: "#9bebc9",
           text: "#0c4022",
         },
       },
