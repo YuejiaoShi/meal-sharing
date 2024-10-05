@@ -53,7 +53,7 @@ function MealByID() {
   return (
     <div
       className={`${
-        theme.isDarkMode ? "bg-darkMode-bg text-darkMode-text" : ""
+        theme.isDarkMode ? "bg-darkMode-hover text-darkMode-text" : ""
       } mt-4 max-w-2xl mx-auto p-6  shadow-lg rounded-lg`}
     >
       <img
@@ -84,7 +84,7 @@ function MealByID() {
         onClick={() => setModalOpen(true)}
         className={`${
           theme.isDarkMode
-            ? "bg-darkMode-darkBG text-darkMode-text hover:bg-darkMode-hover"
+            ? "bg-darkMode-darkBG text-darkMode-text hover:bg-darkMode-bg"
             : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
         } py-2 px-6 rounded transition-colors duration-300 w-full mb-4`}
       >

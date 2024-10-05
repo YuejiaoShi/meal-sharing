@@ -52,23 +52,27 @@ const ReservationModal = ({ isOpen, onClose, mealId }) => {
 
   const theme = useThemeContext();
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 py-4 px-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ">
+      <div
+        className={`${
+          theme.isDarkMode
+            ? "bg-darkMode-hover text-darkMode-text"
+            : "bg-white text-lightMode-text"
+        }  rounded-lg shadow-lg w-11/12 md:w-1/3 py-4 px-6`}
+      >
         <div className="flex flex-col items-end h-6 m-0 p-0">
           <p
-            className="cursor-pointer text-3xl text-primary hover:text-red-600 mb-0"
+            className="cursor-pointer text-3xl  hover:text-red-600 mb-0"
             onClick={onClose}
           >
             &times;
           </p>
         </div>
-        <h2 className="text-xl text-black font-semibold mb-4">
-          Make a Reservation
-        </h2>
+        <h2 className="text-xl font-semibold mb-4">Make a Reservation</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}{" "}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="number_of_guests" className="block text-gray-700">
+            <label htmlFor="number_of_guests" className="block ">
               Number of Guests:
             </label>
             <input
@@ -83,10 +87,7 @@ const ReservationModal = ({ isOpen, onClose, mealId }) => {
           </div>
 
           <div className="mb-4">
-            <label
-              htmlFor="contact_phonenumber"
-              className="block text-gray-700"
-            >
+            <label htmlFor="contact_phonenumber" className="block ">
               Phone Number:
             </label>
             <input
@@ -100,7 +101,7 @@ const ReservationModal = ({ isOpen, onClose, mealId }) => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="contact_name" className="block text-gray-700">
+            <label htmlFor="contact_name" className="block">
               Name:
             </label>
             <input
@@ -114,7 +115,7 @@ const ReservationModal = ({ isOpen, onClose, mealId }) => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="contact_email" className="block text-gray-700">
+            <label htmlFor="contact_email" className="block ">
               Email:
             </label>
             <input
@@ -131,7 +132,7 @@ const ReservationModal = ({ isOpen, onClose, mealId }) => {
             type="submit"
             className={`${
               theme.isDarkMode
-                ? "bg-darkMode-bg text-darkMode-text hover:bg-darkMode-hover"
+                ? "bg-darkMode-darkBG text-darkMode-text hover:bg-darkMode-bg"
                 : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
             } py-2 px-4 rounded`}
           >

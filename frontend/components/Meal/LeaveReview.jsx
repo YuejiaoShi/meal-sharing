@@ -51,7 +51,7 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
         onClick={() => setReviewFormOpen(!isReviewFormOpen)}
         className={`${
           theme.isDarkMode
-            ? "bg-darkMode-darkBG text-darkMode-text hover:bg-darkMode-hover"
+            ? "bg-darkMode-darkBG text-darkMode-text hover:bg-darkMode-bg"
             : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
         } py-2 px-6 rounded transition-colors duration-300 w-full mb-4`}
       >
@@ -108,7 +108,7 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
             type="submit"
             className={`${
               theme.isDarkMode
-                ? "bg-darkMode-darkBG text-darkMode-text hover:bg-darkMode-hover"
+                ? "bg-darkMode-darkBG text-darkMode-text hover:bg-darkMode-bg"
                 : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
             } py-2 px-6 rounded transition-colors duration-300`}
           >
