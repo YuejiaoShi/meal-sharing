@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import StarRating from "./StarRating";
 
 function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
   const [reviewData, setReviewData] = useState({
@@ -55,17 +56,13 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
           className="bg-gray-100 p-4 rounded-lg shadow-md"
         >
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Rating (1-5)</label>
-            <input
-              type="number"
-              min="1"
-              max="5"
-              value={reviewData.rating}
-              onChange={(e) =>
-                setReviewData({ ...reviewData, rating: e.target.value })
-              }
-              className="w-full p-2 border border-gray-300 rounded"
-              required
+            <label className="block text-gray-700 mb-2">Rating</label>
+            <StarRating
+              defaultRating={reviewData.rating}
+              onSetRating={(rating) => setReviewData({ ...reviewData, rating })}
+              color={"#9bebc9"}
+              size={24}
+              messages={["Terrible", "Bad", "Okay", "Good", "Great"]}
             />
           </div>
 
