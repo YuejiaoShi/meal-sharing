@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import StarRating from "./StarRating";
+import { useThemeContext } from "@/context/themeContext";
 
 function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
   const [reviewData, setReviewData] = useState({
@@ -42,11 +43,17 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
     }
   };
 
+  const theme = useThemeContext();
+
   return (
-    <div>
+    <>
       <button
         onClick={() => setReviewFormOpen(!isReviewFormOpen)}
-        className="bg-secondary py-2 px-6 rounded hover:bg-secondary-dark transition-colors duration-300 w-full mb-4"
+        className={`${
+          theme.isDarkMode
+            ? "bg-darkMode-bg text-darkMode-text"
+            : "bg-lightMode-bg text-lightMode-text"
+        } py-2 px-6 rounded hover:bg-[#79edbc] transition-colors duration-300 w-full mb-4`}
       >
         {isReviewFormOpen ? "Cancel Review" : "Leave a Review"}
       </button>
@@ -60,8 +67,8 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
             <StarRating
               defaultRating={reviewData.rating}
               onSetRating={(rating) => setReviewData({ ...reviewData, rating })}
-              color={"#9bebc9"}
-              size={24}
+              color={"#19bf85"}
+              size={36}
               messages={["Terrible", "Bad", "Okay", "Good", "Great"]}
             />
           </div>
@@ -97,13 +104,17 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
 
           <button
             type="submit"
-            className="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700 transition-colors duration-300"
+            className={`${
+              theme.isDarkMode
+                ? "bg-darkMode-bg text-darkMode-text"
+                : "bg-lightMode-bg text-lightMode-text"
+            } py-2 px-6 rounded hover:bg-[#79edbc] transition-colors duration-300`}
           >
             Submit Review
           </button>
         </form>
       )}
-    </div>
+    </>
   );
 }
 

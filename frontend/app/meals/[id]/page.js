@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import ReservationModal from "@/components/Meal/ReservationModal";
 import LeaveReview from "@/components/Meal/leaveReview";
+import { useThemeContext } from "@/context/themeContext";
 
 function MealByID() {
   const { id } = useParams();
@@ -47,6 +48,8 @@ function MealByID() {
     );
   }
 
+  const theme = useThemeContext();
+
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
       <img
@@ -75,7 +78,11 @@ function MealByID() {
 
       <button
         onClick={() => setModalOpen(true)}
-        className="bg-primary text-white py-2 px-6 rounded hover:bg-primary-dark transition-colors duration-300 w-full mb-4"
+        className={`${
+          theme.isDarkMode
+            ? "bg-darkMode-bg text-darkMode-text"
+            : "bg-lightMode-bg text-lightMode-text"
+        } py-2 px-6 rounded hover:bg-[#79edbc] transition-colors duration-300 w-full mb-4`}
       >
         Book Seat
       </button>

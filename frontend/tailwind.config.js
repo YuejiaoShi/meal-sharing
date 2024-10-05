@@ -14,7 +14,7 @@ module.exports = {
           text: "#ffffff",
         },
         lightMode: {
-          bg: "#9bebc9",
+          bg: "#6adead",
           text: "#0c4022",
         },
       },
