@@ -51,23 +51,23 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
         onClick={() => setReviewFormOpen(!isReviewFormOpen)}
         className={`${
           theme.isDarkMode
-            ? "bg-darkMode-bg text-darkMode-text"
-            : "bg-lightMode-bg text-lightMode-text"
-        } py-2 px-6 rounded hover:bg-[#79edbc] transition-colors duration-300 w-full mb-4`}
+            ? "bg-darkMode-bg text-darkMode-text hover:bg-darkMode-hover"
+            : ""
+        } py-2 px-6 rounded transition-colors duration-300 w-full mb-4`}
       >
         {isReviewFormOpen ? "Cancel Review" : "Leave a Review"}
       </button>
       {isReviewFormOpen && (
         <form
           onSubmit={handleReviewSubmit}
-          className="bg-gray-100 p-4 rounded-lg shadow-md"
+          className="bg-gray-200 p-4 rounded-lg shadow-md"
         >
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Rating</label>
             <StarRating
               defaultRating={reviewData.rating}
               onSetRating={(rating) => setReviewData({ ...reviewData, rating })}
-              color={"#19bf85"}
+              color={`${theme.isDarkMode ? "#485d58" : "#19bf85"}`}
               size={36}
               messages={["Terrible", "Bad", "Okay", "Good", "Great"]}
             />
@@ -106,9 +106,9 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
             type="submit"
             className={`${
               theme.isDarkMode
-                ? "bg-darkMode-bg text-darkMode-text"
-                : "bg-lightMode-bg text-lightMode-text"
-            } py-2 px-6 rounded hover:bg-[#79edbc] transition-colors duration-300`}
+                ? "bg-darkMode-bg text-darkMode-text hover:bg-darkMode-hover"
+                : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
+            } py-2 px-6 rounded transition-colors duration-300`}
           >
             Submit Review
           </button>

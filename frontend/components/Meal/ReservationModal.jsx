@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useThemeContext } from "@/context/themeContext";
 
 const ReservationModal = ({ isOpen, onClose, mealId }) => {
   const [numberOfGuests, setNumberOfGuests] = useState("");
@@ -49,6 +50,7 @@ const ReservationModal = ({ isOpen, onClose, mealId }) => {
 
   if (!isOpen) return null;
 
+  const theme = useThemeContext();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/3 py-4 px-6">
@@ -60,7 +62,9 @@ const ReservationModal = ({ isOpen, onClose, mealId }) => {
             &times;
           </p>
         </div>
-        <h2 className="text-xl font-semibold mb-4">Make a Reservation</h2>
+        <h2 className="text-xl text-black font-semibold mb-4">
+          Make a Reservation
+        </h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}{" "}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -125,7 +129,11 @@ const ReservationModal = ({ isOpen, onClose, mealId }) => {
 
           <button
             type="submit"
-            className="bg-primary text-white py-2 px-4 rounded"
+            className={`${
+              theme.isDarkMode
+                ? "bg-darkMode-bg text-darkMode-text hover:bg-darkMode-hover"
+                : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
+            } py-2 px-4 rounded`}
           >
             Submit Reservation
           </button>

@@ -51,7 +51,13 @@ function MealByID() {
   const theme = useThemeContext();
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div
+      className={`${
+        theme.isDarkMode
+          ? "bg-darkMode-bg text-darkMode-text"
+          : "bg-lightMode-bg text-lightMode-text"
+      } mt-4 max-w-2xl mx-auto p-6  shadow-lg rounded-lg`}
+    >
       <img
         src={meal.image}
         alt={meal.title}
@@ -59,20 +65,20 @@ function MealByID() {
       />
 
       <h1 className="text-3xl font-bold mb-4 text-gray-800">{meal.title}</h1>
-      <p className="text-gray-600 mb-4">
+      <p className=" mb-4">
         <strong>Description:</strong> {meal.description}
       </p>
-      <p className="text-gray-600 mb-4">
+      <p className=" mb-4">
         <strong>Location:</strong> {meal.location}
       </p>
-      <p className="text-gray-600 mb-4">
+      <p className=" mb-4">
         <strong>Date:</strong>{" "}
         {format(new Date(meal.when), "h:mm a, MMMM dd, yyyy")}
       </p>
-      <p className="text-gray-600 mb-4">
+      <p className=" mb-4">
         <strong>Max Reservations:</strong> {meal.max_reservations}
       </p>
-      <p className="text-gray-600 mb-6">
+      <p className=" mb-6">
         <strong>Price:</strong> ${meal.price}
       </p>
 
@@ -80,9 +86,9 @@ function MealByID() {
         onClick={() => setModalOpen(true)}
         className={`${
           theme.isDarkMode
-            ? "bg-darkMode-bg text-darkMode-text"
-            : "bg-lightMode-bg text-lightMode-text"
-        } py-2 px-6 rounded hover:bg-[#79edbc] transition-colors duration-300 w-full mb-4`}
+            ? "bg-darkMode-bg text-darkMode-text hover:bg-darkMode-hover"
+            : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
+        } py-2 px-6 rounded transition-colors duration-300 w-full mb-4`}
       >
         Book Seat
       </button>
