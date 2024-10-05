@@ -13,6 +13,7 @@ module.exports = {
           bg: "#485d58",
           text: "#ffffff",
           hover: "#5d7872",
+          darkBG: "#1c312c",
         },
         lightMode: {
           bg: "#6adead",
