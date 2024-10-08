@@ -69,7 +69,7 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
             <StarRating
               defaultRating={reviewData.rating}
               onSetRating={(rating) => setReviewData({ ...reviewData, rating })}
-              color={`${theme.isDarkMode ? "#485d58" : "#19bf85"}`}
+              color={`${theme.isDarkMode ? "#1c312c" : "#19bf85"}`}
               size={36}
               messages={["Terrible", "Bad", "Okay", "Good", "Great"]}
             />
@@ -83,7 +83,7 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
               onChange={(e) =>
                 setReviewData({ ...reviewData, title: e.target.value })
               }
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border text-black border-gray-300 rounded"
               required
             />
           </div>
@@ -95,7 +95,7 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
               onChange={(e) =>
                 setReviewData({ ...reviewData, comment: e.target.value })
               }
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 text-black border border-gray-300 rounded"
               required
             />
           </div>
