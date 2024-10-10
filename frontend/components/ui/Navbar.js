@@ -81,7 +81,7 @@ function NavBar() {
           currentTheme.isDarkMode
             ? "bg-darkMode-bg text-darkMode-text"
             : "bg-lightMode-bg text-lightMode-text"
-        } flex justify-between items-center`}
+        } flex justify-between items-center shadow-lg`}
       >
         <Link href="/" passHref className={`flex items-center space-x-2 `}>
           <IconButton color="inherit" aria-label="logo">
