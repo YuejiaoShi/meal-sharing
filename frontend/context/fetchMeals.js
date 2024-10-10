@@ -1,7 +1,7 @@
 // fetch all meals from the API
 export const fetchMeals = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/all-meals`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meals`);
     if (!res.ok) {
       throw new Error(`Failed to fetch meals. Status: ${res.status}`);
     }
