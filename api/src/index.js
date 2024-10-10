@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import knex from "knex";
+import DBConnection from "./database_client.js";
 import meals from "./routers/meals.js";
 import reservations from "./routers/reservations.js";
 import reviews from "./routers/reviews.js";
@@ -29,7 +29,7 @@ apiRouter.get("/", (req, res) => {
 
 apiRouter.get("/all-meals", async (req, res) => {
   try {
-    const meals = await knex("Meal").orderBy("id", "asc");
+    const meals = await DBConnection("Meal").orderBy("id", "asc");
     res.json(meals);
   } catch (error) {
     console.error("Error fetching all meals:", error);
@@ -40,10 +40,10 @@ apiRouter.get("/all-meals", async (req, res) => {
 apiRouter.get("/future-meals", async (req, res) => {
   try {
     // MySQL's NOW() func could get the current date and time
-    const futureMeals = await knex("Meal").where(
+    const futureMeals = await DBConnection("Meal").where(
       "when",
       ">",
-      knex.raw("NOW()")
+      DBConnection.raw("NOW()")
     );
     res.json(futureMeals);
   } catch (error) {
@@ -54,7 +54,7 @@ apiRouter.get("/future-meals", async (req, res) => {
 
 apiRouter.get("/first-meals", async (req, res) => {
   try {
-    const firstMeal = await knex("Meal").orderBy("id", "asc").limit(1);
+    const firstMeal = await DBConnection("Meal").orderBy("id", "asc").limit(1);
 
     if (firstMeal.length == 0) {
       res.status(404).send("No meals found :(");
@@ -70,7 +70,7 @@ apiRouter.get("/first-meals", async (req, res) => {
 apiRouter.get("/past-meals", async (req, res) => {
   try {
     // MySQL's NOW() func could get the current date and time
-    const pastMeals = await knex("Meal").where("when", "<", knex.raw("NOW()"));
+    const pastMeals = await DBConnection("Meal").where("when", "<", DBConnection.raw("NOW()"));
     res.json(pastMeals);
   } catch (error) {
     console.error("Error fetching past meals:", error);
@@ -80,7 +80,7 @@ apiRouter.get("/past-meals", async (req, res) => {
 
 apiRouter.get("/last-meal", async (req, res) => {
   try {
-    const lastMeal = await knex("Meal").orderBy("ID", "desc").limit(1);
+    const lastMeal = await DBConnection("Meal").orderBy("ID", "desc").limit(1);
     if (lastMeal.length == 0) {
       res.status(404).send("No meals found :(");
     } else {

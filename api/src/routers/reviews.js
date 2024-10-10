@@ -1,5 +1,5 @@
 import express from "express";
-import knex from "../database_client.js";
+import DBConnection from "../database_client.js";
 import handleFormatDateOrDatetime from "../utils/helper.js";
 
 const reviews = express.Router();
@@ -7,7 +7,7 @@ const reviews = express.Router();
 //  ----------- /api/reviews | GET | Returns all reviews -----------
 reviews.get("/", async (req, res) => {
   try {
-    const reviews = await knex("Review").select("*");
+    const reviews = await DBConnection("Review").select("*");
     res.json(reviews);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -41,14 +41,14 @@ reviews.post("/", async (req, res) => {
 
   try {
     // Check if the provided meal_id exists in the Meal table
-    const meal = await knex("Meal").where({ id: meal_id }).first();
+    const meal = await DBConnection("Meal").where({ id: meal_id }).first();
     if (!meal) {
       return res
         .status(404)
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
-    const [newReview] = await knex("Review").insert({
+    const [newReview] = await DBConnection("Review").insert({
       title,
       description,
       meal_id,
@@ -79,7 +79,7 @@ reviews.get("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const review = await knex("Review").where("id", id);
+    const review = await DBConnection("Review").where("id", id);
 
     if (review) {
       return res.json(review);
@@ -116,21 +116,21 @@ reviews.put("/:id", async (req, res) => {
   }
 
   try {
-    const meal = await knex("Meal").where({ id: meal_id }).first();
+    const meal = await DBConnection("Meal").where({ id: meal_id }).first();
     if (!meal) {
       return res
         .status(404)
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
-    const updateReview = await knex("Review")
+    const updateReview = await DBConnection("Review")
       .where("id", id)
       .update(fieldsToUpdate);
 
     if (updateReview > 0) {
       res.status(200).json({
         message: "Review updated :)",
-        review: await knex("Review").where("id", id),
+        review: await DBConnection("Review").where("id", id),
       });
     } else {
       res.status(404).json({ error: "Review Not Found" });
@@ -148,7 +148,7 @@ reviews.delete("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const deletedReview = await knex("Review").where("id", id).del();
+    const deletedReview = await DBConnection("Review").where("id", id).del();
 
     if (!deletedReview) {
       return res.status(404).send("Review Not Found");
