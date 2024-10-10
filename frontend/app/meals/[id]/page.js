@@ -30,6 +30,10 @@ function MealByID() {
     };
 
     fetchMeal();
+
+    // update meal information every 5 seconds
+    const intervalId = setInterval(fetchMeal, 5000);
+    return () => clearInterval(intervalId);
   }, [id]);
 
   if (loading) {
