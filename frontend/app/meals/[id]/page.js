@@ -58,53 +58,52 @@ function MealByID() {
     <div
       className={`${
         theme.isDarkMode ? "bg-darkMode-hover text-darkMode-text" : ""
-      } mt-4 max-w-2xl mx-auto p-6  shadow-lg rounded-lg`}
+      } mt-4 max-w-2xl mx-auto p-6 shadow-lg rounded-lg`}
     >
       <img
         src={meal.image}
         alt={meal.title}
         className="w-full h-64 object-cover rounded-lg mb-6"
       />
+      <h1 className="text-3xl font-bold mb-4">{meal.title}</h1>
 
-      <h1 className="text-3xl font-bold mb-4 text-gray-800">{meal.title}</h1>
-      <p className=" mb-4">
-        <strong>Description:</strong> {meal.description}
-      </p>
-      <p className=" mb-4">
-        <strong>Location:</strong> {meal.location}
-      </p>
-      <p className=" mb-4">
-        <strong>Date:</strong>{" "}
-        {format(new Date(meal.when), "h:mm a, MMMM dd, yyyy")}
-      </p>
-      <p className=" mb-4">
-        <strong>Max Reservations: </strong> {meal.max_reservations}
-      </p>
-      <p className=" mb-4">
-        <strong>Price: </strong>
-        {meal.price} DKK
-      </p>
-      <p className="mb-6">
-        <strong>Available Seats:</strong> {meal.available_seats}
-      </p>
+      <div className="flex flex-col sm:flex-row justify-between gap-4">
+        <div className="w-full sm:w-2/3">
+          <p className="mb-4">{meal.description}</p>
+          <p className="mb-4">
+            <strong>Location:</strong> {meal.location}
+          </p>
+          <p className="mb-4">
+            <strong>Price:</strong> {meal.price} DKK
+          </p>
+        </div>
 
-      <button
-        onClick={() => setModalOpen(true)}
-        className={`${
-          theme.isDarkMode
-            ? "bg-darkMode-darkBG text-darkMode-text hover:bg-darkMode-bg"
-            : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
-        } py-2 px-6 rounded transition-colors duration-300 w-full mb-4`}
-      >
-        Book Seat
-      </button>
+        <div className="flex flex-col items-center w-full sm:w-1/3">
+          <p
+            className={`mb-2 ${
+              meal.available_seats <= 0 ? "text-red-500" : ""
+            }`}
+          >
+            <strong>Available Seats: {meal.available_seats}</strong>
+          </p>
 
+          <button
+            onClick={() => setModalOpen(true)}
+            className={`${
+              theme.isDarkMode
+                ? "bg-darkMode-darkBG text-darkMode-text hover:bg-darkMode-bg"
+                : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
+            } py-2 px-6 rounded-full transition-colors duration-300 mb-4`}
+          >
+            Book Seat
+          </button>
+        </div>
+      </div>
       <ReservationModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         mealId={id}
       />
-
       <LeaveReview
         isReviewFormOpen={isReviewFormOpen}
         setReviewFormOpen={setReviewFormOpen}
