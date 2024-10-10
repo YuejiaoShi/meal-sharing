@@ -32,9 +32,16 @@ meals.get("/", async (req, res) => {
         "Meal.id",
         "Meal.title",
         "Meal.max_reservations",
+        "Meal.description",
+        "Meal.location",
+        "Meal.image",
+        "Meal.created_date",
         DBConnection.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
         "Meal.price",
-        "Meal.when"
+        "Meal.when",
+        DBConnection.raw(
+          "Meal.max_reservations - COALESCE(Reserved.total_guests, 0) AS available_seats"
+        )
       );
 
     // maxPrice Parameter
@@ -43,14 +50,16 @@ meals.get("/", async (req, res) => {
     }
 
     // availableReservations Parameter
-    if (availableReservations === undefined) {
-      return res.status(400).json({
-        error: "Invalid value for 'availableReservations' query parameter",
-      });
-    }
+    // if (availableReservations === undefined) {
+    //   return res.status(400).json({
+    //     error: "Invalid value for 'availableReservations' query parameter",
+    //   });
+    // }
     if (availableReservations === "true") {
       query = query.where(
-        DBConnection.raw("COALESCE(Reserved.total_guests, 0) < Meal.max_reservations")
+        DBConnection.raw(
+          "COALESCE(Reserved.total_guests, 0) < Meal.max_reservations"
+        )
       );
     }
     if (availableReservations === "false") {
@@ -221,7 +230,32 @@ meals.get("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const meal = await DBConnection("Meal").where("id", id);
+    const meal = await DBConnection("Meal")
+      .leftJoin(
+        DBConnection.raw(`(
+        SELECT meal_id, COALESCE(SUM(number_of_guests), 0) AS total_guests
+        FROM Reservation
+        GROUP BY meal_id
+      ) AS Reserved`),
+        "Meal.id",
+        "Reserved.meal_id"
+      )
+      .select(
+        "Meal.id",
+        "Meal.title",
+        "Meal.max_reservations",
+        "Meal.description",
+        "Meal.location",
+        "Meal.image",
+        "Meal.created_date",
+        "Meal.price",
+        "Meal.when",
+        DBConnection.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
+        DBConnection.raw(
+          "GREATEST(Meal.max_reservations - COALESCE(Reserved.total_guests, 0), 0) AS available_seats"
+        )
+      )
+      .where("Meal.id", id);
 
     if (meal) {
       return res.json(meal);
