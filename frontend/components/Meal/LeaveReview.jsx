@@ -61,7 +61,7 @@ function LeaveReview({ isReviewFormOpen, setReviewFormOpen, meal_id }) {
         <form
           onSubmit={handleReviewSubmit}
           className={`${
-            theme.isDarkMode ? "bg-gray-200" : "bg-gray-100"
+            theme.isDarkMode ? "bg-gray-200" : "bg-[#e4f5ef]"
           } p-4 rounded-lg shadow-md`}
         >
           <div className="mb-4">
