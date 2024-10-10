@@ -15,7 +15,8 @@ function HomePage() {
               Discover Delicious Meals
             </h1>
             <p className="text-lg mb-6">
-              Freshly made meals, hand-picked just for you!
+              Savor the Fun! Share Your Favorite Meals and Discover New Flavors
+              from Foodies Everywhere!
             </p>
             <Link
               href="/meals"
@@ -29,7 +30,7 @@ function HomePage() {
 
       <section className="py-12">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-semibold text-center mb-8">
+          <h2 className="text-3xl font-semibold text-center">
             Our Top Picks for You
           </h2>
           <MealsList previewCount={3} />
