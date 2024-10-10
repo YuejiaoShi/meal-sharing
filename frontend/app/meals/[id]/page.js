@@ -76,9 +76,12 @@ function MealByID() {
       <p className=" mb-4">
         <strong>Max Reservations: </strong> {meal.max_reservations}
       </p>
-      <p className=" mb-6">
+      <p className=" mb-4">
         <strong>Price: </strong>
         {meal.price} DKK
+      </p>
+      <p className="mb-6">
+        <strong>Available Seats:</strong> {meal.available_seats}
       </p>
 
       <button
