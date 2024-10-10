@@ -74,10 +74,11 @@ function MealByID() {
         {format(new Date(meal.when), "h:mm a, MMMM dd, yyyy")}
       </p>
       <p className=" mb-4">
-        <strong>Max Reservations:</strong> {meal.max_reservations}
+        <strong>Max Reservations: </strong> {meal.max_reservations}
       </p>
       <p className=" mb-6">
-        <strong>Price:</strong> ${meal.price}
+        <strong>Price: </strong>
+        {meal.price} DKK
       </p>
 
       <button
