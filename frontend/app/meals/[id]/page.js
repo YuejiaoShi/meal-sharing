@@ -78,9 +78,9 @@ function MealByID() {
           </p>
         </div>
 
-        <div className="flex flex-col items-center w-full sm:w-1/3">
+        <div className="flex flex-col items-center justify-center mx-auto w-full sm:w-1/3 border-orange-300 border-dashed border-2 rounded-2xl mb-5">
           <p
-            className={`mb-2 ${
+            className={`mt-4 mb-2 ${
               meal.available_seats <= 0 ? "text-red-500" : ""
             }`}
           >
