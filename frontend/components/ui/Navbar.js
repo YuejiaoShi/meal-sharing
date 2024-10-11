@@ -21,9 +21,13 @@ import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToogle";
 import { useThemeContext } from "@/context/themeContext";
 
+import SearchBar from "./SearchBar";
+
 function NavBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useMediaQuery("(max-width:600px)");
+  const isSmallWebScreen = useMediaQuery("(max-width:890px)");
   const pathname = usePathname();
 
   const toggleDrawer = () => {
@@ -34,12 +38,17 @@ function NavBar() {
     return pathname === path ? "font-bold text-base" : "";
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    setSearchQuery(e.target.value);
+  };
+
   const currentTheme = useThemeContext();
 
   const menuItems = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About Us" },
-    { href: "/meals", label: "Menu" },
+    { href: "/meals", label: "Meals" },
     { href: "/contact", label: "Contact" },
   ];
 
@@ -93,22 +102,42 @@ function NavBar() {
               className="w-8 h-8"
             />
           </IconButton>
-          <Typography variant="h6" className="text- ml-0">
-            Meal Sharing
-          </Typography>
+          {isSmallWebScreen ? null : (
+            <Typography variant="h6" className="text- ml-0">
+              MealSharing
+            </Typography>
+          )}
         </Link>
         {isMobile ? (
-          <>
-            <IconButton color="inherit" onClick={toggleDrawer}>
-              <MenuIcon />
-            </IconButton>
+          <div className="flex justify-center items-center w-full">
+            <div className="flex justify-center items-center w-full">
+              <SearchBar
+                searchQuery={searchQuery}
+                handleSearchSubmit={handleSearchSubmit}
+              />
+            </div>
+            <div className="ml-auto">
+              <IconButton color="inherit" onClick={toggleDrawer}>
+                <MenuIcon />
+              </IconButton>
+            </div>
             <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer}>
               {drawer}
             </Drawer>
-          </>
+          </div>
         ) : (
-          <Stack direction="row" spacing={2}>
+          <Stack
+            direction="row"
+            spacing={1}
+            className="flex justify-center items-center ml-4"
+          >
+            <SearchBar
+              searchQuery={searchQuery}
+              handleSearchSubmit={handleSearchSubmit}
+            />
+
             <ThemeToggle />
+
             <Button
               color="inherit"
               component={Link}
@@ -131,7 +160,7 @@ function NavBar() {
               href="/meals"
               className={getButtonClasses("/meals")}
             >
-              Menu
+              Meals
             </Button>
             <Button
               color="inherit"
