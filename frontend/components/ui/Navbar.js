@@ -21,14 +21,9 @@ import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToogle";
 import { useThemeContext } from "@/context/themeContext";
 
-import SearchBar from "./SearchBar";
-import { mealSearch } from "@/lib/mealSearch";
-
 function NavBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useMediaQuery("(max-width:600px)");
-  const isSmallWebScreen = useMediaQuery("(max-width:890px)");
   const pathname = usePathname();
 
   const toggleDrawer = () => {
@@ -37,21 +32,6 @@ function NavBar() {
 
   const getButtonClasses = (path) => {
     return pathname === path ? "font-bold text-base" : "";
-  };
-
-  const handleSearchSubmit = async (e) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) {
-      alert("Please enter a meal title to search.");
-      return;
-    }
-    try {
-      await mealSearch(searchQuery);
-      setSearchQuery("");
-    } catch (error) {
-      console.error("Search failed:", error);
-      alert("An error occurred while searching for the meal.");
-    }
   };
 
   const currentTheme = useThemeContext();
@@ -113,21 +93,13 @@ function NavBar() {
               className="w-8 h-8"
             />
           </IconButton>
-          {isSmallWebScreen ? null : (
-            <Typography variant="h6" className="text- ml-0">
-              MealSharing
-            </Typography>
-          )}
+
+          <Typography variant="h6" className="text- ml-0">
+            MealSharing
+          </Typography>
         </Link>
         {isMobile ? (
           <div className="flex justify-center items-center w-full">
-            <div className="flex justify-center items-center w-full">
-              <SearchBar
-                searchQuery={searchQuery}
-                handleSearchSubmit={handleSearchSubmit}
-                setSearchQuery={setSearchQuery}
-              />
-            </div>
             <div className="ml-auto">
               <IconButton color="inherit" onClick={toggleDrawer}>
                 <MenuIcon />
@@ -143,12 +115,6 @@ function NavBar() {
             spacing={1}
             className="flex justify-center items-center ml-4"
           >
-            <SearchBar
-              searchQuery={searchQuery}
-              handleSearchSubmit={handleSearchSubmit}
-              setSearchQuery={setSearchQuery}
-            />
-
             <ThemeToggle />
 
             <Button
