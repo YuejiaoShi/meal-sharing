@@ -10,7 +10,7 @@ function SearchBar({ searchQuery, handleSearchSubmit, setSearchQuery }) {
     >
       <InputBase
         className="flex-grow text-black bg-transparent outline-none"
-        placeholder="Search..."
+        placeholder="Search a meal..."
         inputProps={{ "aria-label": "search meal" }}
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
