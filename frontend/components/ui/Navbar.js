@@ -22,7 +22,7 @@ import ThemeToggle from "./ThemeToogle";
 import { useThemeContext } from "@/context/themeContext";
 
 import SearchBar from "./SearchBar";
-import { mealSearch } from "@/context/mealSearch";
+import { mealSearch } from "@/lib/mealSearch";
 
 function NavBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);

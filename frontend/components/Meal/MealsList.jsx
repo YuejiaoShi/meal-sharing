@@ -1,5 +1,5 @@
 "use client";
-import { fetchMeals } from "@/context/fetchMeals";
+import { fetchMeals } from "@/lib/fetchMeals";
 import { useEffect, useState } from "react";
 import Meal from "./Meal";
 

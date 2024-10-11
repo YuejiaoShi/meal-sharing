@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchMealById } from "@/context/fetchMealById";
+import { fetchMealById } from "@/lib/fetchMealById";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
