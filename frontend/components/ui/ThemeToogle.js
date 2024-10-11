@@ -12,7 +12,7 @@ export default function ThemeToggle() {
   const theme = useThemeContext();
 
   return (
-    <Button onClick={theme.handleThemeChange}>
+    <Button onClick={theme.handleThemeChange} sx={{ p: 0, m: 0 }}>
       <img
         src={theme.isDarkMode ? modeIcons.lightIcon : modeIcons.darkIcon}
         alt="mode toggle"
