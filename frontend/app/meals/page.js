@@ -54,15 +54,10 @@ function MealsPage() {
   return (
     <div className="p-5">
       <div className="flex justify-center items-center max-w-5xl mx-auto p-4">
-        <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleSearchSubmit={handleSearchSubmit}
-        />
         <button
           type="button"
           onClick={fetchAllMeals}
-          className={`ml-3 flex justify-center items-center h-10 min-w-max p-3 rounded-full ${
+          className={`mr-5 flex justify-center items-center h-10 min-w-max p-3 rounded-full ${
             theme.isDarkMode
               ? "bg-darkMode-bg text-darkMode-text hover:bg-darkMode-hover"
               : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
@@ -70,10 +65,30 @@ function MealsPage() {
         >
           Show All Meals
         </button>
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          handleSearchSubmit={handleSearchSubmit}
+        />
       </div>
-      {loading && <p className="text-gray-500">Loading meals...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
-      {!loading && !error && meals.length === 0 && <p>No meals found.</p>}
+      {loading && (
+        <div className="text-gray-500 italic text-xl flex flex-col items-center justify-center">
+          <p className="animate-pulse text-lg font-semibold">
+            Loading meals...
+          </p>
+        </div>
+      )}
+      {error && (
+        <p className="bg-red-100 border border-red-500 text-red-700 px-4 py-2 rounded-md shadow-md transition-transform transform hover:scale-105">
+          Error: {error}
+        </p>
+      )}
+      {!loading && !error && meals.length === 0 && (
+        <div className="text-gray-500 italic text-xl flex flex-col items-center justify-center">
+          <p>No meals found :(</p>
+          <p> Try to search something else.</p>
+        </div>
+      )}
       <MealsList meals={meals} />
     </div>
   );
