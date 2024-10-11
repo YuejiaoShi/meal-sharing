@@ -63,7 +63,7 @@ function MealsPage() {
               : "bg-lightMode-bg text-lightMode-text hover:bg-lightMode-hover"
           } shadow-md`}
         >
-          Show All Meals
+          ✨ Show All Meals
         </button>
         <SearchBar
           searchQuery={searchQuery}
