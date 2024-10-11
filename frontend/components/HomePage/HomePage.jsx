@@ -1,8 +1,31 @@
 "use client";
 import Link from "next/link";
 import MealsList from "../Meal/MealsList";
+import { useEffect, useState } from "react";
+import { fetchMeals } from "@/lib/fetchMeals";
 
 function HomePage() {
+  const [meals, setMeals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const loadMeals = async () => {
+      try {
+        const mealsData = await fetchMeals();
+        setMeals(mealsData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMeals();
+  }, []);
+
+  const mealsToDisplay = meals.slice(0, 3);
+
   return (
     <div className="min-h-screen ">
       <div
@@ -33,7 +56,7 @@ function HomePage() {
           <h2 className="text-3xl font-semibold text-center">
             Our Top Picks for You
           </h2>
-          <MealsList previewCount={3} />
+          <MealsList meals={mealsToDisplay} />
           <div className="text-center mt-6">
             <Link
               href="/meals"
