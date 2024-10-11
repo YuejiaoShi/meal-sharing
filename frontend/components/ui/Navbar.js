@@ -22,6 +22,7 @@ import ThemeToggle from "./ThemeToogle";
 import { useThemeContext } from "@/context/themeContext";
 
 import SearchBar from "./SearchBar";
+import { mealSearch } from "@/context/mealSearch";
 
 function NavBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -38,9 +39,19 @@ function NavBar() {
     return pathname === path ? "font-bold text-base" : "";
   };
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = async (e) => {
     e.preventDefault();
-    setSearchQuery(e.target.value);
+    if (!searchQuery.trim()) {
+      alert("Please enter a meal title to search.");
+      return;
+    }
+    try {
+      await mealSearch(searchQuery);
+      setSearchQuery("");
+    } catch (error) {
+      console.error("Search failed:", error);
+      alert("An error occurred while searching for the meal.");
+    }
   };
 
   const currentTheme = useThemeContext();
@@ -114,6 +125,7 @@ function NavBar() {
               <SearchBar
                 searchQuery={searchQuery}
                 handleSearchSubmit={handleSearchSubmit}
+                setSearchQuery={setSearchQuery}
               />
             </div>
             <div className="ml-auto">
@@ -134,6 +146,7 @@ function NavBar() {
             <SearchBar
               searchQuery={searchQuery}
               handleSearchSubmit={handleSearchSubmit}
+              setSearchQuery={setSearchQuery}
             />
 
             <ThemeToggle />
