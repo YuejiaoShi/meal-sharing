@@ -6,7 +6,7 @@ function SearchBar({ searchQuery, handleSearchSubmit, setSearchQuery }) {
     <Paper
       component="form"
       onSubmit={handleSearchSubmit}
-      className="flex items-center h-10 rounded-full pl-4 pr-1 bg-gray-100 shadow-md"
+      className="flex items-center h-10 w-2/3 rounded-full pl-4 pr-1 bg-gray-100 shadow-md"
     >
       <InputBase
         className="flex-grow text-black bg-transparent outline-none"
