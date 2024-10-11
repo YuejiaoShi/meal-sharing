@@ -16,9 +16,10 @@ function SearchBar({ searchQuery, handleSearchSubmit, setSearchQuery }) {
         onChange={(e) => setSearchQuery(e.target.value)}
       />
       <IconButton
-        type="button"
+        type="submit"
         aria-label="search"
         className="p-2 text-gray-600 hover:text-gray-800"
+        onClick={handleSearchSubmit}
       >
         <SearchIcon />
       </IconButton>
