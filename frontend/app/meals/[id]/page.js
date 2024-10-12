@@ -71,6 +71,10 @@ function MealByID() {
         <div className="w-full sm:w-2/3">
           <p className="mb-4">{meal.description}</p>
           <p className="mb-4">
+            <strong>Max Reservation: </strong>
+            {meal.max_reservations}
+          </p>
+          <p className="mb-4">
             <strong>Location:</strong> {meal.location}
           </p>
           <p className="mb-4">
