@@ -82,16 +82,22 @@ function MealsPage() {
           </button>
 
           <div className="flex flex-col sm:flex-row mb-2 w-full max-w-[400px] items-center m-2">
-            <div className="flex items-center text-lightMode-text m-2">
+            <div
+              className={`flex items-center  m-2 ${
+                theme.isDarkMode
+                  ? "text-darkMode-text "
+                  : " text-lightMode-text "
+              } `}
+            >
               <label
                 htmlFor="sortKey"
-                className="mr-1 text-lg italic w-16 text-right"
+                className="mr-1 text-lg italic w-16 text-right "
               >
                 Sort by
               </label>
               <select
                 id="sortKey"
-                className="p-1 w-32 text-center border-b-2 border-lightMode-bg focus:outline-none focus:border-b-4 focus:font-bold"
+                className="bg-inherit p-1 w-32 text-center border-b-2 border-lightMode-bg focus:outline-none focus:border-b-4 focus:font-bold"
                 value={sortKey}
                 onChange={(e) => setSortKey(e.target.value)}
               >
@@ -101,7 +107,7 @@ function MealsPage() {
               </select>
             </div>
 
-            <div className="flex items-center text-lightMode-text">
+            <div className="flex items-center ">
               <label
                 htmlFor="sortDir"
                 className="mr-1 text-lg italic w-16 text-right"
@@ -110,7 +116,7 @@ function MealsPage() {
               </label>
               <select
                 id="sortDir"
-                className="p-1 w-32 text-center border-b-2 border-lightMode-bg focus:outline-none focus:border-b-4 focus:font-bold"
+                className="bg-inherit p-1 w-32 text-center border-b-2 border-lightMode-bg focus:outline-none focus:border-b-4 focus:font-bold"
                 value={sortDir}
                 onChange={(e) => setSortDir(e.target.value)}
               >
