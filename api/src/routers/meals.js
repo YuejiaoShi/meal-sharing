@@ -119,7 +119,7 @@ meals.get("/", async (req, res) => {
           error: "sortDir must work with a soreKey.",
         });
       }
-      const validSortKeys = ["when", "max_reservations", "price"];
+      const validSortKeys = ["id", "when", "max_reservations", "price"];
       const validSortDirs = ["ASC", "DESC"];
 
       const FormattedSortDir = sortDir ? sortDir.toUpperCase() : "ASC";
