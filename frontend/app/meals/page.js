@@ -12,6 +12,8 @@ function MealsPage() {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
+  const [sortKey, setSortKey] = useState("when");
+  const [sortDir, setSortDir] = useState("ASC");
 
   useEffect(() => {
     const loadMeals = async () => {
@@ -20,9 +22,13 @@ function MealsPage() {
       try {
         let mealsData;
         if (submittedQuery.trim()) {
-          mealsData = await searchMealsByTitle(submittedQuery);
+          mealsData = await searchMealsByTitle(
+            submittedQuery,
+            sortKey,
+            sortDir
+          );
         } else {
-          mealsData = await fetchMeals();
+          mealsData = await fetchMeals({ sortKey, sortDir });
         }
         setMeals(mealsData);
       } catch (err) {
@@ -33,7 +39,7 @@ function MealsPage() {
     };
 
     loadMeals();
-  }, [submittedQuery]);
+  }, [submittedQuery, sortKey, sortDir]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -71,6 +77,27 @@ function MealsPage() {
           handleSearchSubmit={handleSearchSubmit}
         />
       </div>
+
+      <div className="flex justify-center items-center mb-4">
+        <select
+          className="mr-2 p-2 border rounded"
+          value={sortKey}
+          onChange={(e) => setSortKey(e.target.value)}
+        >
+          <option value="when">Date</option>
+          <option value="price">Price</option>
+          <option value="max_reservations">Max Reservations</option>
+        </select>
+        <select
+          className="p-2 border rounded"
+          value={sortDir}
+          onChange={(e) => setSortDir(e.target.value)}
+        >
+          <option value="ASC">Ascending</option>
+          <option value="DESC">Descending</option>
+        </select>
+      </div>
+
       {loading && (
         <div className="text-gray-500 italic text-xl flex flex-col items-center justify-center">
           <p className="animate-pulse text-lg font-semibold">
