@@ -9,7 +9,7 @@ function Meal({ meal }) {
         className={`flex flex-col justify-between rounded-lg h-full p-6 transition-shadow duration-200 ${
           theme.isDarkMode
             ? "bg-darkMode-bg text-darkMode-text hover:shadow-[0_0_10px_#9bebc9]"
-            : "bg-white text-lightMode-text shadow-md hover:shadow-lg"
+            : "bg-white text-lightMode-text shadow-md hover:shadow-[0_0_10px_#9bebc9]"
         }`}
       >
         <div>
