@@ -1,16 +1,21 @@
-import { fetchMeals } from "@/lib/fetchMeals";
-
-export async function searchMealsByTitle(title) {
+export async function searchMealsByTitle(title, sortKey, sortDir) {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/meals?title=${title}`
-    );
+    let url = `${process.env.NEXT_PUBLIC_API_URL}/meals?title=${title}`;
+
+    if (sortKey) {
+      url += `&sortKey=${sortKey}`;
+    }
+    if (sortDir) {
+      url += `&sortDir=${sortDir}`;
+    }
+
+    const response = await fetch(url);
+
     if (!response.ok) {
       throw new Error("Failed to fetch meals");
-      s;
     }
-    const meals = await response.json();
 
+    const meals = await response.json();
     return meals;
   } catch (error) {
     console.error("Error fetching meals:", error);

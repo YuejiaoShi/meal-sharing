@@ -1,7 +1,8 @@
-// fetch all meals from the API
-export const fetchMeals = async () => {
+export const fetchMeals = async ({ sortKey = "id", sortDir = "ASC" } = {}) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meals`);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/meals?sortKey=${sortKey}&sortDir=${sortDir}`
+    );
     if (!res.ok) {
       throw new Error(`Failed to fetch meals. Status: ${res.status}`);
     }
