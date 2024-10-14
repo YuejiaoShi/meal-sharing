@@ -24,9 +24,9 @@ const footerSections = [
   {
     title: "Contact Us",
     links: [
-      { label: "Phone: +45 11111111" },
-      { label: "Location: Copenhagen, DK" },
-      { label: "Email: info@mealsharing.com" },
+      { icon: "/ContactIcons/phone.png", label: "+45 11111111" },
+      { icon: "/ContactIcons/location.png", label: "Copenhagen, Denmark" },
+      { icon: "/ContactIcons/email.png", label: "info@mealsharing.com" },
     ],
   },
 ];
@@ -83,10 +83,21 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">{section.title}</h3>
             <ul className="space-y-2">
               {section.links.map((link, idx) => (
-                <li key={idx}>
-                  <performance className="hover:underline">
-                    {link.label}
-                  </performance>
+                <li key={idx} className="flex items-center space-x-2">
+                  {link.icon ? (
+                    <>
+                      <img
+                        src={link.icon}
+                        alt={link.label}
+                        className="w-4 h-4"
+                      />
+                      <span>{link.label}</span>
+                    </>
+                  ) : (
+                    <Link href={link.href} className="hover:underline">
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
