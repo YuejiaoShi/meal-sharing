@@ -4,9 +4,9 @@ import Link from "next/link";
 
 const footerSections = [
   {
-    title: "Menu",
+    title: "Meal",
     links: [
-      { href: "/meals", label: "Our Menu" },
+      { href: "/meals", label: "Our Meals" },
       { href: "/specials", label: "Chef's Specials" },
       { href: "/drinks", label: "Drinks" },
       { href: "/desserts", label: "Desserts" },
@@ -22,12 +22,11 @@ const footerSections = [
     ],
   },
   {
-    title: "Customer Service",
+    title: "Contact Us",
     links: [
-      { href: "/contact", label: "Contact Us" },
-      { href: "/locations", label: "Find a Location" },
-      { href: "/reservations", label: "Reservations" },
-      { href: "/faq", label: "FAQ" },
+      { label: "Phone: +45 11111111" },
+      { label: "Location: Copenhagen, DK" },
+      { label: "Email: info@mealsharing.com" },
     ],
   },
 ];
@@ -74,10 +73,10 @@ const Footer = () => {
             className="w-16 h-auto mb-4 block"
           />
           <p className="mb-4">
-            Welcome to Meal Sharing. Join us for delicious meals and great
-            company!
+            Welcome to Meal Sharing. Join us for delicious meals and celebrate
+            the joy of good food with us!
           </p>
-          <p>© 2024 Meal Sharing. All rights reserved.</p>
+          <p>© 2024 Meal Sharing by Yuejiao Shi. All rights reserved.</p>
         </div>
         {footerSections.map((section, index) => (
           <div key={index} className="col-span-1">
@@ -85,15 +84,18 @@ const Footer = () => {
             <ul className="space-y-2">
               {section.links.map((link, idx) => (
                 <li key={idx}>
-                  <Link href={link.href} className="hover:underline">
+                  <performance className="hover:underline">
                     {link.label}
-                  </Link>
+                  </performance>
                 </li>
               ))}
             </ul>
           </div>
         ))}
-        <div className="col-span-1 md:col-span-4 flex justify-center md:justify-end mt-8 md:mt-0 space-x-4">
+        <div
+          id="social-media"
+          className="col-span-1 md:col-span-4 flex justify-center md:justify-end mt-8 md:mt-0 space-x-4"
+        >
           <h3 className="font-semibold">Follow us</h3>
           <div className="flex items-center space-x-4">
             {socialMediaLinks.map((media, index) => (

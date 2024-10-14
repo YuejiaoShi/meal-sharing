@@ -38,7 +38,7 @@ function NavBar() {
 
   const menuItems = [
     { href: "/", label: "Home" },
-    { href: "/about", label: "About Us" },
+    { href: "/about-us", label: "About Us" },
     { href: "/meals", label: "Meals" },
     { href: "/contact", label: "Contact" },
   ];
@@ -128,7 +128,7 @@ function NavBar() {
             <Button
               color="inherit"
               component={Link}
-              href="/about"
+              href="/about-us"
               className={getButtonClasses("/about")}
             >
               About Us
@@ -144,8 +144,8 @@ function NavBar() {
             <Button
               color="inherit"
               component={Link}
-              href="/contact"
-              className={getButtonClasses("/contact")}
+              href="#social-media"
+              className={getButtonClasses("#social-media")}
             >
               Contact
             </Button>
