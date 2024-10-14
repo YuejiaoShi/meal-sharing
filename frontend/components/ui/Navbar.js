@@ -15,7 +15,7 @@ import {
   useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToogle";
@@ -25,22 +25,36 @@ function NavBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width:600px)");
   const pathname = usePathname();
+  const theme = useTheme();
+  const currentTheme = useThemeContext();
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
 
+  useEffect(() => {
+    const handleHashChange = () => setDrawerOpen(false);
+    const handlePathChange = () => setDrawerOpen(false);
+
+    window.addEventListener("hashchange", handleHashChange);
+
+    window.addEventListener("popstate", handlePathChange);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener("popstate", handlePathChange);
+    };
+  }, [pathname]);
+
   const getButtonClasses = (path) => {
     return pathname === path ? "font-bold text-base" : "";
   };
-
-  const currentTheme = useThemeContext();
 
   const menuItems = [
     { href: "/", label: "Home" },
     { href: "/about-us", label: "About Us" },
     { href: "/meals", label: "Meals" },
-    { href: "/contact", label: "Contact" },
+    { href: "#social-media", label: "Contact" },
   ];
 
   const drawer = (
@@ -51,6 +65,7 @@ function NavBar() {
             component={Link}
             href={item.href}
             className={getButtonClasses(item.href)}
+            onClick={() => setDrawerOpen(false)}
           >
             {item.label}
           </ListItemButton>
@@ -61,8 +76,6 @@ function NavBar() {
       </ListItem>
     </List>
   );
-
-  const theme = useTheme();
 
   return (
     <AppBar
@@ -105,7 +118,11 @@ function NavBar() {
                 <MenuIcon />
               </IconButton>
             </div>
-            <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer}>
+            <Drawer
+              anchor="right"
+              open={drawerOpen}
+              onClose={() => setDrawerOpen(false)}
+            >
               {drawer}
             </Drawer>
           </div>
@@ -116,39 +133,18 @@ function NavBar() {
             className="flex justify-center items-center ml-4"
           >
             <ThemeToggle />
-
-            <Button
-              color="inherit"
-              component={Link}
-              href="/"
-              className={getButtonClasses("/")}
-            >
-              Home
-            </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              href="/about-us"
-              className={getButtonClasses("/about")}
-            >
-              About Us
-            </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              href="/meals"
-              className={getButtonClasses("/meals")}
-            >
-              Meals
-            </Button>
-            <Button
-              color="inherit"
-              component={Link}
-              href="#social-media"
-              className={getButtonClasses("#social-media")}
-            >
-              Contact
-            </Button>
+            {menuItems.map((item) => (
+              <Button
+                key={item.href}
+                color="inherit"
+                component={Link}
+                href={item.href}
+                className={getButtonClasses(item.href)}
+                onClick={() => setDrawerOpen(false)}
+              >
+                {item.label}
+              </Button>
+            ))}
           </Stack>
         )}
       </Toolbar>
