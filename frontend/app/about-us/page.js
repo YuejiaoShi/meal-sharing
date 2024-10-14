@@ -78,7 +78,7 @@ const AboutUs = () => {
           href="mailto:support@mealsharing.com"
           className="text-blue-600 underline hover:text-blue-800 transition duration-200 ml-1"
         >
-          support@mealsharing.com
+          info@mealsharing.com
         </a>
         . We’d love to hear from you!
       </p>
