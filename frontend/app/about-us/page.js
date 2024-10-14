@@ -12,9 +12,9 @@ const AboutUs = () => {
         theme.isDarkMode
           ? "bg-darkMode-bg text-darkMode-text"
           : "bg-white text-lightMode-text"
-      } p-8 max-w-5xl mx-auto rounded-lg shadow-lg shadow-lightMode-bg mt-12 sm:m-0 sm:border-0 border border-gray-200 transition-all duration-300`}
+      } p-8 max-w-5xl mx-auto rounded-lg shadow-lg mt-0 lg:mt-10 border border-lightMode-bg shadow-lightMode-bg transition-all duration-300`}
     >
-      <h1 className="text-4xl font-bold mb-6 text-center underline decoration-lime-300 decoration-3">
+      <h1 className="text-4xl font-bold mb-6 text-center underline decoration-lightMode-bg decoration-3">
         About Us
       </h1>
       <p className="mb-6 text-lg">
@@ -23,8 +23,7 @@ const AboutUs = () => {
         bring people together through food and create memorable dining
         experiences.
       </p>
-
-      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lime-300 pb-2">
+      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lightMode-bg pb-2">
         Our Services
       </h2>
       <ul className="list-disc list-inside mb-6 pl-5">
@@ -51,8 +50,7 @@ const AboutUs = () => {
           meals and reservations to stay informed about your dining options.
         </li>
       </ul>
-
-      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lime-300 pb-2">
+      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lightMode-bg pb-2">
         Our Vision
       </h2>
       <p className="mb-6 text-lg">
@@ -61,8 +59,7 @@ const AboutUs = () => {
         showcases diverse cuisines but also encourages hosts and guests to share
         their stories, creating a vibrant tapestry of culinary experiences.
       </p>
-
-      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lime-300 pb-2">
+      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lightMode-bg pb-2">
         Join Us
       </h2>
       <p className="mb-6 text-lg">
@@ -71,8 +68,7 @@ const AboutUs = () => {
         is the perfect place for you. Join our community and experience the joy
         of sharing meals with others!
       </p>
-
-      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lime-300 pb-2">
+      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lightMode-bg pb-2">
         Contact Us
       </h2>
       <p className="text-lg">
