@@ -13,9 +13,9 @@ const footerSections = [
   {
     title: "About Us",
     links: [
-      { href: "/our-story", label: "Our Story" },
-      { href: "/team", label: "Meet the Team" },
-      { href: "/careers", label: "Careers" },
+      { href: "about-us#our-services", label: "Our Services" },
+      { href: "about-us#our-vision", label: "Our Vision" },
+      { href: "about-us#join-us", label: "Join Us" },
     ],
   },
   {

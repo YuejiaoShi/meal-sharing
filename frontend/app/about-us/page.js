@@ -23,7 +23,10 @@ const AboutUs = () => {
         bring people together through food and create memorable dining
         experiences.
       </p>
-      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lightMode-bg pb-2">
+      <h2
+        id="our-services"
+        className="text-3xl font-semibold mb-4 border-b-2 border-lightMode-bg pb-2"
+      >
         Our Services
       </h2>
       <ul className="list-disc list-inside mb-6 pl-5">
@@ -50,7 +53,10 @@ const AboutUs = () => {
           meals and reservations to stay informed about your dining options.
         </li>
       </ul>
-      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lightMode-bg pb-2">
+      <h2
+        id="our-vision"
+        className="text-3xl font-semibold mb-4 border-b-2 border-lightMode-bg pb-2"
+      >
         Our Vision
       </h2>
       <p className="mb-6 text-lg">
@@ -68,7 +74,10 @@ const AboutUs = () => {
         is the perfect place for you. Join our community and experience the joy
         of sharing meals with others!
       </p>
-      <h2 className="text-3xl font-semibold mb-4 border-b-2 border-lightMode-bg pb-2">
+      <h2
+        id="join-us"
+        className="text-3xl font-semibold mb-4 border-b-2 border-lightMode-bg pb-2"
+      >
         Contact Us
       </h2>
       <p className="text-lg">
