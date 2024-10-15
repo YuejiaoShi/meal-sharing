@@ -7,7 +7,7 @@ const footerSections = [
     title: "Meal",
     links: [
       { href: "/meals", label: "Our Meals" },
-      { href: "/restaurants", label: "Restaurants" },
+      { href: "/share-a-meal", label: "Share A Meal" },
     ],
   },
   {
