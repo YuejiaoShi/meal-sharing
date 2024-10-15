@@ -7,16 +7,15 @@ import fs from "fs";
 
 // Set up multer for file uploads
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = path.join(process.cwd(), "public/meals");
+  destination: function (req, file, cb) {
+    const dir = path.join(process.cwd(), "..", "frontend", "public", "meals");
     fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
+  filename: function (req, file, cb) {
+    cb(null, `${file.originalname}`);
   },
 });
-
 const upload = multer({ storage });
 
 const meals = express.Router();
@@ -66,12 +65,6 @@ meals.get("/", async (req, res) => {
       query = query.where("Meal.price", "<=", maxPrice);
     }
 
-    // availableReservations Parameter
-    // if (availableReservations === undefined) {
-    //   return res.status(400).json({
-    //     error: "Invalid value for 'availableReservations' query parameter",
-    //   });
-    // }
     if (availableReservations === "true") {
       query = query.where(
         DBConnection.raw(
