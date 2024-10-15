@@ -3,7 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useThemeContext } from "@/context/themeContext";
-import MealForm from "./MealForm"; // Adjust the import path as necessary
+import MealForm from "@/components/ShareAMeal/MealForm";
 
 function ShareAMealPage() {
   const [mealData, setMealData] = useState({
@@ -12,8 +12,8 @@ function ShareAMealPage() {
     location: "",
     max_reservations: "",
     price: "",
-    when: "", // User input for when
-    image: null, // Added for image file
+    when: "",
+    image: null,
   });
   const [error, setError] = useState(null);
   const [message, setMessage] = useState("");
@@ -27,7 +27,6 @@ function ShareAMealPage() {
     setError(null);
     setMessage("");
 
-    // Check if all required fields are filled
     const {
       title,
       description,
@@ -45,18 +44,17 @@ function ShareAMealPage() {
       !max_reservations ||
       !price ||
       !when ||
-      !image // Ensure image is included
+      !image
     ) {
       setError("All fields are required.");
       setLoading(false);
       return;
     }
 
-    // Create FormData
     const formData = new FormData();
     for (const key in mealData) {
       if (key === "image") {
-        formData.append(key, mealData.image); // Append the file directly
+        formData.append(key, mealData.image);
       } else {
         formData.append(key, mealData[key]);
       }
@@ -68,7 +66,7 @@ function ShareAMealPage() {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // Set correct header for FormData
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -80,13 +78,13 @@ function ShareAMealPage() {
         max_reservations: "",
         price: "",
         when: "",
-        image: null, // Reset the image as well
+        image: null,
       });
       setSelectedImage(null);
     } catch (err) {
-      console.error("Error posting meal:", err); // Log the complete error
+      console.error("Error posting meal:", err);
       if (err.response) {
-        console.error("Response data:", err.response.data); // Log response data
+        console.error("Response data:", err.response.data);
         setError(err.response.data.error || "Something went wrong.");
       } else {
         setError("An unexpected error occurred.");
