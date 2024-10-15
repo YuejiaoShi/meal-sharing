@@ -7,10 +7,7 @@ const footerSections = [
     title: "Meal",
     links: [
       { href: "/meals", label: "Our Meals" },
-      { href: "/specials", label: "Chef's Specials" },
-      { href: "/drinks", label: "Drinks" },
-      { href: "/desserts", label: "Desserts" },
-      { href: "/catering", label: "Catering" },
+      { href: "/restaurants", label: "Restaurants" },
     ],
   },
   {
