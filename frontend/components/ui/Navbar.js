@@ -24,6 +24,7 @@ import { useThemeContext } from "@/context/themeContext";
 function NavBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width:600px)");
+  const isTablet = useMediaQuery("(max-width:768px)");
   const pathname = usePathname();
   const theme = useTheme();
   const currentTheme = useThemeContext();
@@ -37,7 +38,6 @@ function NavBar() {
     const handlePathChange = () => setDrawerOpen(false);
 
     window.addEventListener("hashchange", handleHashChange);
-
     window.addEventListener("popstate", handlePathChange);
 
     return () => {
@@ -54,6 +54,7 @@ function NavBar() {
     { href: "/", label: "Home" },
     { href: "/about-us", label: "About Us" },
     { href: "/meals", label: "Meals" },
+    { href: "/share-a-meal", label: "Share A Meal" },
     { href: "#social-media", label: "Contact" },
   ];
 
@@ -107,9 +108,11 @@ function NavBar() {
             />
           </IconButton>
 
-          <Typography variant="h6" className="text- ml-0">
-            MealSharing
-          </Typography>
+          {!isTablet && (
+            <Typography variant="h6" className="text- ml-0">
+              MealSharing
+            </Typography>
+          )}
         </Link>
         {isMobile ? (
           <div className="flex justify-center items-center w-full">
@@ -141,6 +144,9 @@ function NavBar() {
                 href={item.href}
                 className={getButtonClasses(item.href)}
                 onClick={() => setDrawerOpen(false)}
+                sx={{
+                  whiteSpace: "nowrap",
+                }}
               >
                 {item.label}
               </Button>
