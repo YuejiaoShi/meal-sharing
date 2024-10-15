@@ -41,7 +41,7 @@ const MealForm = ({
     {
       name: "when",
       type: "datetime-local",
-      label: "When (YYYY-MM-DD HH:MM:SS)",
+      label: "Date and Time",
       required: true,
     },
   ];
