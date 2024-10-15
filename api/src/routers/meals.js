@@ -1,6 +1,23 @@
 import express from "express";
 import DBConnection from "../database_client.js";
 import handleFormatDateOrDatetime from "../utils/helper.js";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// Set up multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(process.cwd(), "public/meals");
+    fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage });
 
 const meals = express.Router();
 
@@ -145,25 +162,20 @@ meals.get("/", async (req, res) => {
 //  ----------- /api/meals | GET | Returns all meals -----------
 
 // ----------- /api/meals | POST | Adds a new meal to the database -----------
-meals.post("/", async (req, res) => {
-  const {
-    title,
-    description,
-    location,
-    when,
-    max_reservations,
-    price,
-    created_date,
-  } = req.body;
+meals.post("/", upload.single("image"), async (req, res) => {
+  const { title, description, location, when, max_reservations, price } =
+    req.body;
+
+  const image = req.file;
 
   if (
     !title ||
     !description ||
     !location ||
-    !when ||
     !max_reservations ||
     !price ||
-    !created_date
+    !when ||
+    !image
   ) {
     return res.status(400).json({
       error: "All fields are required for posting a meal :(",
@@ -174,6 +186,7 @@ meals.post("/", async (req, res) => {
         when: "datetime (YYYY-MM-DD HH:MM:SS)",
         max_reservations: "integer",
         price: "decimal",
+        image: "file",
         created_date: "date (YYYY-MM-DD)",
       },
     });
@@ -185,13 +198,10 @@ meals.post("/", async (req, res) => {
     "datetime",
     res
   );
-
-  const formattedCreatedDate = handleFormatDateOrDatetime(
-    "created_date",
-    created_date,
-    "date",
-    res
-  );
+  const formattedCreatedDate = new Date()
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
 
   try {
     const [newMeal] = await DBConnection("Meal").insert({
@@ -201,10 +211,10 @@ meals.post("/", async (req, res) => {
       when: formattedWhenDate,
       max_reservations,
       price,
+      image: `/meals/${image.originalname}`,
       created_date: formattedCreatedDate,
     });
 
-    // Respond with the new added meal
     res.status(201).json({
       message: `${title} was added :)`,
       id: newMeal,
@@ -214,6 +224,7 @@ meals.post("/", async (req, res) => {
       when: formattedWhenDate,
       max_reservations,
       price,
+      image: `/meals/${image.originalname}`,
       created_date: formattedCreatedDate,
     });
   } catch (error) {
