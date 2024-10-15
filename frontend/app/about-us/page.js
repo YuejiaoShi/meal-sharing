@@ -12,7 +12,7 @@ const AboutUs = () => {
         theme.isDarkMode
           ? "bg-darkMode-bg text-darkMode-text"
           : "bg-white text-lightMode-text"
-      } p-8 max-w-5xl mx-auto rounded-lg shadow-lg mt-0 lg:mt-10 border border-lightMode-bg shadow-lightMode-bg transition-all duration-300`}
+      } p-8 max-w-5xl mx-auto rounded-lg shadow-lg mt-0 lg:mt-10 lg:mb-8 border border-lightMode-bg shadow-lightMode-bg transition-all duration-300`}
     >
       <h1 className="text-4xl font-bold mb-6 text-center underline decoration-lightMode-bg decoration-3">
         About Us
