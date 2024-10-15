@@ -28,13 +28,15 @@ const MealForm = ({
       type: "number",
       label: "Max Reservations",
       required: true,
+      min: 1,
     },
     {
       name: "price",
       type: "number",
       label: "Price",
       required: true,
-      step: "0.01",
+      step: "1",
+      min: 1,
     },
     {
       name: "when",
@@ -134,6 +136,7 @@ const MealForm = ({
               onChange={handleChange}
               required={field.required}
               step={field.step}
+              min={field.min}
               className={`w-full px-3 py-2 border rounded-md ${
                 theme.isDarkMode ? "border-gray-700" : "border-lightMode-hover"
               } focus:outline-none focus:ring-2 focus:ring-lightMode-hover 
