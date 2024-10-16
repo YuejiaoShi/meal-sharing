@@ -83,8 +83,10 @@ const MealForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`max-w-lg mx-auto p-6 rounded-lg shadow-xl ${
-        theme.isDarkMode ? "bg-darkMode-bg" : "white"
+      className={`mx-auto p-6 rounded-lg ${
+        theme.isDarkMode
+          ? "bg-darkMode-bg"
+          : "white border border-lightMode-hover"
       }`}
     >
       <h2
@@ -177,7 +179,7 @@ const MealForm = ({
         }`}
         disabled={loading}
       >
-        {loading ? "Submitting..." : "Share a Meal"}
+        {loading ? "Submitting..." : "Submit"}
       </button>
     </form>
   );

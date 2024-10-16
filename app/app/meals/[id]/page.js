@@ -10,6 +10,7 @@ import { useThemeContext } from "@/context/themeContext";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { fetchReviewsById } from "@/lib/fetchReviewsById";
+import fetchAverageStars from "@/lib/fetchAverageStars";
 
 function MealByID() {
   const { id } = useParams();
@@ -19,6 +20,7 @@ function MealByID() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isReviewFormOpen, setReviewFormOpen] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(null);
 
   useEffect(() => {
     const fetchMeal = async () => {
@@ -54,6 +56,17 @@ function MealByID() {
     if (id) {
       fetchReviews();
     }
+  }, [id]);
+
+  useEffect(() => {
+    const getAverageRating = async () => {
+      if (id) {
+        const rating = await fetchAverageStars(id);
+        setAverageRating(rating);
+      }
+    };
+
+    getAverageRating();
   }, [id]);
 
   if (loading) {
@@ -96,17 +109,6 @@ function MealByID() {
 
   const theme = useThemeContext();
 
-  const calculateAverageRating = (reviews) => {
-    if (reviews.length === 0) return 0;
-    const totalRating = reviews.reduce((acc, review) => {
-      return acc + review.stars;
-    }, 0);
-    console.log(totalRating);
-    return (totalRating / reviews.length).toFixed(1);
-  };
-
-  const averageRating = calculateAverageRating(reviews);
-
   return (
     <div
       className={`${
@@ -116,14 +118,20 @@ function MealByID() {
       <img
         src={meal.image}
         alt={meal.title}
-        className="w-full h-64 object-cover rounded-lg mb-6"
+        className="w-full h-80 object-cover rounded-lg mb-6"
       />
       <h1 className="flex justify-between items-center text-3xl font-bold mb-4">
         <span className="mr-2">{meal.title}</span>
 
         <span className="flex items-center justify-center mr-2 text-xl text-yellow-500">
-          <span className="mr-2">{displayStars(averageRating)}</span>
-          <span>{averageRating}</span>
+          {averageRating !== null ? (
+            <>
+              <span className="mr-2">{displayStars(averageRating)}</span>
+              <span>{averageRating}</span>
+            </>
+          ) : (
+            <span>No ratings yet</span>
+          )}
         </span>
       </h1>
 
