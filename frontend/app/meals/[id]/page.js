@@ -120,8 +120,10 @@ function MealByID() {
       />
       <h1 className="flex justify-between items-center text-3xl font-bold mb-4">
         <span className="mr-2">{meal.title}</span>
-        <span className="text-xl mr-2 font-semibold text-yellow-500">
-          &#9733; {averageRating} / 5.0
+
+        <span className="flex items-center justify-center mr-2 text-xl text-yellow-500">
+          <span className="mr-2">{displayStars(averageRating)}</span>
+          <span>{averageRating}</span>
         </span>
       </h1>
 
