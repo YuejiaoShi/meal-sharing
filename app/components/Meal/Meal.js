@@ -19,22 +19,17 @@ function Meal({ meal }) {
             alt={`image of ${meal.title}`}
           />
           <div className="mt-4">
-            <p className="text-lg font-semibold">
-              <strong>Title:</strong> {meal.title}
-            </p>
+            <p className="text-lg font-semibold">{meal.title}</p>
             <p
               className={`mt-2 ${
                 theme.isDarkMode ? "text-gray-300" : "text-gray-600"
               }`}
             >
-              <strong>Description:</strong> {meal.description}
+              {meal.description}
             </p>
           </div>
         </div>
-        <p className="mt-4 font-bold">
-          <strong>Price: </strong>
-          {meal.price} kr
-        </p>
+        <p className="mt-4 font-bold">{meal.price} DKK</p>
       </div>
     </Link>
   );
