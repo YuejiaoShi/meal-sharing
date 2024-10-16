@@ -33,11 +33,13 @@ function Meal({ meal }) {
           />
           <div className="mt-4 flex flex-row justify-between">
             <p className="text-lg font-semibold">{meal.title}</p>
-            <p>
-              {averageRating !== null && (
-                <span className="mt-2 font-bold text-yellow-500">
-                  {averageRating} / 5 <span>&#9733;</span>
+            <p className="font-bold text-yellow-500">
+              {averageRating !== null ? (
+                <span>
+                  <span>{averageRating}</span> / 5 <span>&#9733;</span>
                 </span>
+              ) : (
+                <span>No ratings yet</span>
               )}
             </p>
           </div>
