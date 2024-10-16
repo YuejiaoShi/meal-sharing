@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import ReservationModal from "@/components/Meal/ReservationModal";
-import LeaveReview from "@/components/Meal/leaveReview";
+import LeaveReview from "@/components/Meal/LeaveReview";
 import { useThemeContext } from "@/context/themeContext";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
