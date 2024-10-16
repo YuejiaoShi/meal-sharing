@@ -27,7 +27,7 @@ function Meal({ meal }) {
       >
         <div>
           <img
-            className="w-full h-48 object-cover rounded-t-lg"
+            className="w-full h-48 object-cover rounded-t-lg mb-4"
             src={meal.image}
             alt={`image of ${meal.title}`}
           />
@@ -51,7 +51,17 @@ function Meal({ meal }) {
             {meal.description}
           </p>
         </div>
-        <p className="mt-4 font-bold">{meal.price} DKK</p>
+        <div className="flex mt-4 flex-row justify-between">
+          <p className="font-bold">{meal.price} DKK</p>
+          {meal.available_seats <= 0 ? (
+            <p className="text-red-500 font-bold">No spots left :(</p>
+          ) : (
+            <p>
+              <strong>{meal.available_seats}</strong>
+              <span> spots left</span>
+            </p>
+          )}
+        </div>
       </div>
     </Link>
   );
