@@ -33,54 +33,54 @@ meals.get("/", async (req, res) => {
       sortKey,
       sortDir,
     } = req.query;
-    let meals = await DBConnection("meal").select("*");
-    let query = DBConnection("meal")
+    let meals = await DBConnection("Meal").select("*");
+    let query = DBConnection("Meal")
       .leftJoin(
         DBConnection.raw(`(
         SELECT meal_id, COALESCE(SUM(number_of_guests), 0) AS total_guests
         FROM Reservation
         GROUP BY meal_id
       ) AS Reserved`),
-        "meal.id",
+        "Meal.id",
         "Reserved.meal_id"
       )
       .select(
-        "meal.id",
-        "meal.title",
-        "meal.max_reservations",
-        "meal.description",
-        "meal.location",
-        "meal.image",
-        "meal.created_date",
+        "Meal.id",
+        "Meal.title",
+        "Meal.max_reservations",
+        "Meal.description",
+        "Meal.location",
+        "Meal.image",
+        "Meal.created_date",
         DBConnection.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
-        "meal.price",
-        "meal.when",
+        "Meal.price",
+        "Meal.when",
         DBConnection.raw(
-          "meal.max_reservations - COALESCE(Reserved.total_guests, 0) AS available_seats"
+          "Meal.max_reservations - COALESCE(Reserved.total_guests, 0) AS available_seats"
         )
       );
 
     // maxPrice Parameter
     if (maxPrice) {
-      query = query.where("meal.price", "<=", maxPrice);
+      query = query.where("Meal.price", "<=", maxPrice);
     }
 
     if (availableReservations === "true") {
       query = query.where(
         DBConnection.raw(
-          "COALESCE(Reserved.total_guests, 0) < meal.max_reservations"
+          "COALESCE(Reserved.total_guests, 0) < Meal.max_reservations"
         )
       );
     }
     if (availableReservations === "false") {
       query = query.whereRaw(
-        "COALESCE(Reserved.total_guests, 0) >= meal.max_reservations"
+        "COALESCE(Reserved.total_guests, 0) >= Meal.max_reservations"
       );
     }
 
     // title Parameter
     if (title) {
-      query = query.where("meal.title", "like", `%${title}%`);
+      query = query.where("Meal.title", "like", `%${title}%`);
     }
 
     // dateAfter Parameter
@@ -94,7 +94,7 @@ meals.get("/", async (req, res) => {
       if (!formattedDateAfter) {
         return;
       }
-      query = query.where("meal.when", ">", new Date(formattedDateAfter));
+      query = query.where("Meal.when", ">", new Date(formattedDateAfter));
     }
     // dateBefore Parameter
     if (dateBefore) {
@@ -107,7 +107,7 @@ meals.get("/", async (req, res) => {
       if (!formattedDateBefore) {
         return;
       }
-      query = query.where("meal.when", "<", new Date(formattedDateBefore));
+      query = query.where("Meal.when", "<", new Date(formattedDateBefore));
     }
 
     // limit Parameter
