@@ -87,9 +87,9 @@ function MealsPage() {
             ✨ View All Meals
           </button>
 
-          <div className="flex flex-col sm:flex-row mb-2 w-full max-w-[400px] items-center m-2">
+          <div className="flex flex-col sm:flex-row mb-2 w-full max-w-[400px] items-center">
             <div
-              className={`flex items-center m-2 ${
+              className={`flex items-center ${
                 theme.isDarkMode
                   ? "text-darkMode-text "
                   : " text-lightMode-text "
@@ -113,7 +113,13 @@ function MealsPage() {
               </select>
             </div>
 
-            <div className="flex items-center ">
+            <div
+              className={`flex items-center mt-2 ${
+                theme.isDarkMode
+                  ? "text-darkMode-text "
+                  : " text-lightMode-text "
+              } `}
+            >
               <label
                 htmlFor="sortDir"
                 className="mr-1 text-lg italic w-16 text-right"
@@ -163,7 +169,7 @@ function MealsPage() {
         </div>
       )}
       {error && (
-        <p className="bg-red-100 border border-red-500 text-red-700 px-4 py-2 rounded-md shadow-md transition-transform transform hover:scale-105">
+        <p className="bg-red-100 max-w-5xl mx-auto mt-4 border border-red-500 text-red-700 px-4 py-2 rounded-md shadow-md transition-transform transform">
           Error: {error}
         </p>
       )}
