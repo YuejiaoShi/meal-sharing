@@ -7,6 +7,9 @@ import React, { useEffect, useState } from "react";
 import ReservationModal from "@/components/Meal/ReservationModal";
 import LeaveReview from "@/components/Meal/leaveReview";
 import { useThemeContext } from "@/context/themeContext";
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { fetchReviewsById } from "@/lib/fetchReviewsById";
 
 function MealByID() {
   const { id } = useParams();
@@ -15,6 +18,7 @@ function MealByID() {
   const [error, setError] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isReviewFormOpen, setReviewFormOpen] = useState(false);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     const fetchMeal = async () => {
@@ -36,6 +40,22 @@ function MealByID() {
     return () => clearInterval(intervalId);
   }, [id]);
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const reviewsData = await fetchReviewsById(id);
+
+        setReviews(reviewsData);
+      } catch (error) {
+        setError(err.message);
+      }
+    };
+
+    if (id) {
+      fetchReviews();
+    }
+  }, [id]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -52,13 +72,35 @@ function MealByID() {
     );
   }
 
+  const displayStars = (rating) => {
+    const maxStars = 5;
+    const stars = [];
+
+    for (let i = 0; i < rating; i++) {
+      stars.push(
+        <StarIcon key={`full-${i}`} className="h-5 w-5 text-yellow-400" />
+      );
+    }
+
+    for (let i = rating; i < maxStars; i++) {
+      stars.push(
+        <StarBorderIcon
+          key={`empty-${i}`}
+          className="h-5 w-5 text-yellow-400"
+        />
+      );
+    }
+
+    return stars;
+  };
+
   const theme = useThemeContext();
 
   return (
     <div
       className={`${
         theme.isDarkMode ? "bg-darkMode-hover text-darkMode-text" : ""
-      } mt-4 max-w-2xl mx-auto p-6 shadow-lg rounded-lg`}
+      } mt-4 max-w-4xl mx-auto p-6 shadow-lg rounded-lg`}
     >
       <img
         src={meal.image}
@@ -113,6 +155,36 @@ function MealByID() {
         setReviewFormOpen={setReviewFormOpen}
         meal_id={id}
       />
+
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
+        {reviews.length > 0 ? (
+          <ul>
+            {reviews.map((review) => (
+              <li
+                key={review.id}
+                className={`mb-4 p-4 rounded-lg shadow ${
+                  theme.isDarkMode
+                    ? "bg-darkMode-bg text-darkMode-text"
+                    : "bg-gray-100"
+                }`}
+              >
+                <h3 className="font-bold">{review.title}</h3>
+                <p className="text-sm">
+                  {format(new Date(review.created_date), "MMMM d, yyyy")}
+                </p>
+                <p className="mt-2">{review.description}</p>
+
+                <span className="flex items-center mt-2">
+                  {displayStars(review.stars)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-600">No reviews yet.</p>
+        )}
+      </div>
     </div>
   );
 }
