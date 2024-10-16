@@ -14,6 +14,7 @@ function MealsPage() {
   const [submittedQuery, setSubmittedQuery] = useState("");
   const [sortKey, setSortKey] = useState("when");
   const [sortDir, setSortDir] = useState("ASC");
+  const [availableReservations, setAvailableReservations] = useState(null);
 
   useEffect(() => {
     const loadMeals = async () => {
@@ -25,10 +26,15 @@ function MealsPage() {
           mealsData = await searchMealsByTitle(
             submittedQuery,
             sortKey,
-            sortDir
+            sortDir,
+            availableReservations
           );
         } else {
-          mealsData = await fetchMeals({ sortKey, sortDir });
+          mealsData = await fetchMeals({
+            sortKey,
+            sortDir,
+            availableReservations,
+          });
         }
         setMeals(mealsData);
       } catch (err) {
@@ -39,7 +45,7 @@ function MealsPage() {
     };
 
     loadMeals();
-  }, [submittedQuery, sortKey, sortDir]);
+  }, [submittedQuery, sortKey, sortDir, availableReservations]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -83,7 +89,7 @@ function MealsPage() {
 
           <div className="flex flex-col sm:flex-row mb-2 w-full max-w-[400px] items-center m-2">
             <div
-              className={`flex items-center  m-2 ${
+              className={`flex items-center m-2 ${
                 theme.isDarkMode
                   ? "text-darkMode-text "
                   : " text-lightMode-text "
@@ -124,6 +130,27 @@ function MealsPage() {
                 <option value="DESC">Descending</option>
               </select>
             </div>
+          </div>
+          <div className="flex items-center m-2">
+            <input
+              type="checkbox"
+              id="availableReservations"
+              checked={availableReservations}
+              onChange={(e) => setAvailableReservations(e.target.checked)}
+              className={`w-5 h-5 transition-colors duration-200 ease-in-out border-2 rounded-md cursor-pointer accent-lightMode-bg ${
+                theme.isDarkMode
+                  ? "bg-darkMode-bg text-darkMode-text border-darkMode-hover focus:ring-darkMode-text"
+                  : "bg-lightMode-bg text-lightMode-text border-lightMode-hover focus:ring-lightMode-text"
+              }`}
+            />
+            <label
+              htmlFor="availableReservations"
+              className={`ml-2 text-lg italic ${
+                theme.isDarkMode ? "text-darkMode-text" : "text-lightMode-text"
+              }`}
+            >
+              Available Spots
+            </label>
           </div>
         </div>
       </div>
