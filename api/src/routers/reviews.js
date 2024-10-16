@@ -7,8 +7,8 @@ const reviews = express.Router();
 //  ----------- /api/reviews | GET | Returns all reviews -----------
 reviews.get("/", async (req, res) => {
   try {
-    const reviews = await DBConnection("Review").select("*");
-    res.json(reviews);
+    const reviewsData = await DBConnection("review").select("*");
+    res.json(reviewsData);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -32,23 +32,21 @@ reviews.post("/", async (req, res) => {
   }
 
   // Format created_date (date)
-  const formattedCreatedDate = handleFormatDateOrDatetime(
-    "created_date",
-    created_date,
-    "date",
-    res
-  );
+  const formattedCreatedDate = new Date()
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
 
   try {
-    // Check if the provided meal_id exists in the Meal table
-    const meal = await DBConnection("Meal").where({ id: meal_id }).first();
+    // Check if the provided meal_id exists in the meal table
+    const meal = await DBConnection("meal").where({ id: meal_id }).first();
     if (!meal) {
       return res
         .status(404)
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
-    const [newReview] = await DBConnection("Review").insert({
+    const [newReview] = await DBConnection("review").insert({
       title,
       description,
       meal_id,
@@ -79,7 +77,7 @@ reviews.get("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const review = await DBConnection("Review").where("id", id);
+    const review = await DBConnection("review").where("id", id);
 
     if (review) {
       return res.json(review);
@@ -116,21 +114,21 @@ reviews.put("/:id", async (req, res) => {
   }
 
   try {
-    const meal = await DBConnection("Meal").where({ id: meal_id }).first();
+    const meal = await DBConnection("meal").where({ id: meal_id }).first();
     if (!meal) {
       return res
         .status(404)
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
-    const updateReview = await DBConnection("Review")
+    const updateReview = await DBConnection("review")
       .where("id", id)
       .update(fieldsToUpdate);
 
     if (updateReview > 0) {
       res.status(200).json({
         message: "Review updated :)",
-        review: await DBConnection("Review").where("id", id),
+        review: await DBConnection("review").where("id", id),
       });
     } else {
       res.status(404).json({ error: "Review Not Found" });
@@ -148,7 +146,7 @@ reviews.delete("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const deletedReview = await DBConnection("Review").where("id", id).del();
+    const deletedReview = await DBConnection("review").where("id", id).del();
 
     if (!deletedReview) {
       return res.status(404).send("Review Not Found");

@@ -4,19 +4,19 @@ import handleFormatDateOrDatetime from "../utils/helper.js";
 
 const reservations = express.Router();
 
-//  ----------- /api/reservations | GET | Returns all Reservations -----------
+//  ----------- /api/reservations | GET | Returns all reservations -----------
 reservations.get("/", async (req, res) => {
   try {
-    const reservations = await DBConnection("Reservation").select("*");
-    res.json(reservations);
+    const reservationsData = await DBConnection("reservation").select("*");
+    res.json(reservationsData);
   } catch (error) {
     const errMessage = error.message;
     res.status(500).json({ error: errMessage });
   }
 });
-//  ----------- /api/reservations | GET | Returns all Reservations -----------
+//  ----------- /api/reservations | GET | Returns all reservations -----------
 
-// ----------- /api/reservations | POST | Adds a new Reservation to the database -----------
+// ----------- /api/reservations | POST | Adds a new reservation to the database -----------
 reservations.post("/", async (req, res) => {
   const {
     number_of_guests,
@@ -55,14 +55,14 @@ reservations.post("/", async (req, res) => {
   );
 
   try {
-    const meal = await DBConnection("Meal").where({ id: meal_id }).first();
+    const meal = await DBConnection("meal").where({ id: meal_id }).first();
     if (!meal) {
       return res
         .status(404)
         .json({ error: "Invalid meal_id. Meal does not exist." });
     }
 
-    const existingReservation = await DBConnection("Reservation")
+    const existingReservation = await DBConnection("reservation")
       .where({
         meal_id: meal_id,
         contact_email: contact_email,
@@ -71,16 +71,14 @@ reservations.post("/", async (req, res) => {
       .first();
 
     if (existingReservation) {
-      return res
-        .status(400)
-        .json({
-          error: "A reservation with this email already exists for this meal.",
-        });
+      return res.status(400).json({
+        error: "A reservation with this email already exists for this meal.",
+      });
     }
 
     const total_guests_before_post = Number(
       (
-        await DBConnection("Reservation")
+        await DBConnection("reservation")
           .where("meal_id", meal_id)
           .sum("number_of_guests as total_guests")
           .first()
@@ -93,7 +91,7 @@ reservations.post("/", async (req, res) => {
           .status(400)
           .json({ error: "Not enough available spots for this meal." });
       }
-      const [newReservation] = await DBConnection("Reservation").insert({
+      const [newReservation] = await DBConnection("reservation").insert({
         number_of_guests,
         meal_id,
         created_date: formattedCreatedDate,
@@ -128,7 +126,7 @@ reservations.get("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const reservation = await DBConnection("Reservation").where("id", id);
+    const reservation = await DBConnection("reservation").where("id", id);
 
     if (reservation) {
       return res.json(reservation);
@@ -166,7 +164,7 @@ reservations.put("/:id", async (req, res) => {
   }
 
   try {
-    const meal = await DBConnection("Meal").where({ id: meal_id }).first();
+    const meal = await DBConnection("meal").where({ id: meal_id }).first();
     if (!meal) {
       return res
         .status(404)
@@ -175,7 +173,7 @@ reservations.put("/:id", async (req, res) => {
 
     const total_guests = Number(
       (
-        await DBConnection("Reservation")
+        await DBConnection("reservation")
           .where("meal_id", meal_id)
           .sum("number_of_guests as total_guests")
           .first()
@@ -191,14 +189,14 @@ reservations.put("/:id", async (req, res) => {
       fieldsToUpdate.number_of_guests = number_of_guests;
     }
 
-    const updateReservation = await DBConnection("Reservation")
+    const updateReservation = await DBConnection("reservation")
       .where("id", id)
       .update(fieldsToUpdate);
 
     if (updateReservation > 0) {
       res.status(200).json({
         message: "Reservation updated :)",
-        reservation: await DBConnection("Reservation").where("id", id),
+        reservation: await DBConnection("reservation").where("id", id),
       });
     } else {
       res.status(404).json({ error: "Reservation Not Found" });
@@ -217,7 +215,7 @@ reservations.delete("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const deletedReservation = await DBConnection("Reservation")
+    const deletedReservation = await DBConnection("reservation")
       .where("id", id)
       .del();
 
@@ -231,4 +229,5 @@ reservations.delete("/:id", async (req, res) => {
   }
 });
 // ----------- /api/reservations/:id | DELETE | Deletes the reservation by id -----------
+
 export default reservations;
