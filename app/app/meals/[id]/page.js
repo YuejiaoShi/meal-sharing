@@ -118,7 +118,7 @@ function MealByID() {
       <img
         src={meal.image}
         alt={meal.title}
-        className="w-full h-64 object-cover rounded-lg mb-6"
+        className="w-full h-80 object-cover rounded-lg mb-6"
       />
       <h1 className="flex justify-between items-center text-3xl font-bold mb-4">
         <span className="mr-2">{meal.title}</span>
