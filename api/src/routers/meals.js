@@ -1,6 +1,22 @@
 import express from "express";
-import knex from "../database_client.js";
+import DBConnection from "../database_client.js";
 import handleFormatDateOrDatetime from "../utils/helper.js";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// Set up multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const dir = path.join(process.cwd(), "..", "frontend", "public", "meals");
+    fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${file.originalname}`);
+  },
+});
+const upload = multer({ storage });
 
 const meals = express.Router();
 
@@ -17,10 +33,10 @@ meals.get("/", async (req, res) => {
       sortKey,
       sortDir,
     } = req.query;
-    let meals = await knex("Meal").select("*");
-    let query = knex("Meal")
+    let meals = await DBConnection("Meal").select("*");
+    let query = DBConnection("Meal")
       .leftJoin(
-        knex.raw(`(
+        DBConnection.raw(`(
         SELECT meal_id, COALESCE(SUM(number_of_guests), 0) AS total_guests
         FROM Reservation
         GROUP BY meal_id
@@ -32,9 +48,16 @@ meals.get("/", async (req, res) => {
         "Meal.id",
         "Meal.title",
         "Meal.max_reservations",
-        knex.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
+        "Meal.description",
+        "Meal.location",
+        "Meal.image",
+        "Meal.created_date",
+        DBConnection.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
         "Meal.price",
-        "Meal.when"
+        "Meal.when",
+        DBConnection.raw(
+          "Meal.max_reservations - COALESCE(Reserved.total_guests, 0) AS available_seats"
+        )
       );
 
     // maxPrice Parameter
@@ -42,15 +65,11 @@ meals.get("/", async (req, res) => {
       query = query.where("Meal.price", "<=", maxPrice);
     }
 
-    // availableReservations Parameter
-    if (availableReservations === undefined) {
-      return res.status(400).json({
-        error: "Invalid value for 'availableReservations' query parameter",
-      });
-    }
     if (availableReservations === "true") {
       query = query.where(
-        knex.raw("COALESCE(Reserved.total_guests, 0) < Meal.max_reservations")
+        DBConnection.raw(
+          "COALESCE(Reserved.total_guests, 0) < Meal.max_reservations"
+        )
       );
     }
     if (availableReservations === "false") {
@@ -110,7 +129,7 @@ meals.get("/", async (req, res) => {
           error: "sortDir must work with a soreKey.",
         });
       }
-      const validSortKeys = ["when", "max_reservations", "price"];
+      const validSortKeys = ["id", "when", "max_reservations", "price"];
       const validSortDirs = ["ASC", "DESC"];
 
       const FormattedSortDir = sortDir ? sortDir.toUpperCase() : "ASC";
@@ -136,25 +155,20 @@ meals.get("/", async (req, res) => {
 //  ----------- /api/meals | GET | Returns all meals -----------
 
 // ----------- /api/meals | POST | Adds a new meal to the database -----------
-meals.post("/", async (req, res) => {
-  const {
-    title,
-    description,
-    location,
-    when,
-    max_reservations,
-    price,
-    created_date,
-  } = req.body;
+meals.post("/", upload.single("image"), async (req, res) => {
+  const { title, description, location, when, max_reservations, price } =
+    req.body;
+
+  const image = req.file;
 
   if (
     !title ||
     !description ||
     !location ||
-    !when ||
     !max_reservations ||
     !price ||
-    !created_date
+    !when ||
+    !image
   ) {
     return res.status(400).json({
       error: "All fields are required for posting a meal :(",
@@ -165,6 +179,7 @@ meals.post("/", async (req, res) => {
         when: "datetime (YYYY-MM-DD HH:MM:SS)",
         max_reservations: "integer",
         price: "decimal",
+        image: "file",
         created_date: "date (YYYY-MM-DD)",
       },
     });
@@ -176,26 +191,23 @@ meals.post("/", async (req, res) => {
     "datetime",
     res
   );
-
-  const formattedCreatedDate = handleFormatDateOrDatetime(
-    "created_date",
-    created_date,
-    "date",
-    res
-  );
+  const formattedCreatedDate = new Date()
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
 
   try {
-    const [newMeal] = await knex("Meal").insert({
+    const [newMeal] = await DBConnection("Meal").insert({
       title,
       description,
       location,
       when: formattedWhenDate,
       max_reservations,
       price,
+      image: `/meals/${image.originalname}`,
       created_date: formattedCreatedDate,
     });
 
-    // Respond with the new added meal
     res.status(201).json({
       message: `${title} was added :)`,
       id: newMeal,
@@ -205,6 +217,7 @@ meals.post("/", async (req, res) => {
       when: formattedWhenDate,
       max_reservations,
       price,
+      image: `/meals/${image.originalname}`,
       created_date: formattedCreatedDate,
     });
   } catch (error) {
@@ -221,7 +234,32 @@ meals.get("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const meal = await knex("Meal").where("id", id);
+    const meal = await DBConnection("Meal")
+      .leftJoin(
+        DBConnection.raw(`(
+        SELECT meal_id, COALESCE(SUM(number_of_guests), 0) AS total_guests
+        FROM Reservation
+        GROUP BY meal_id
+      ) AS Reserved`),
+        "Meal.id",
+        "Reserved.meal_id"
+      )
+      .select(
+        "Meal.id",
+        "Meal.title",
+        "Meal.max_reservations",
+        "Meal.description",
+        "Meal.location",
+        "Meal.image",
+        "Meal.created_date",
+        "Meal.price",
+        "Meal.when",
+        DBConnection.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
+        DBConnection.raw(
+          "GREATEST(Meal.max_reservations - COALESCE(Reserved.total_guests, 0), 0) AS available_seats"
+        )
+      )
+      .where("Meal.id", id);
 
     if (meal) {
       return res.json(meal);
@@ -267,14 +305,14 @@ meals.put("/:id", async (req, res) => {
   }
 
   try {
-    const updateMeal = await knex("Meal")
+    const updateMeal = await DBConnection("Meal")
       .where("id", id)
       .update(fieldsToUpdate);
 
     if (updateMeal > 0) {
       res.status(200).json({
         message: "Meal updated :)",
-        meal: await knex("Meal").where("id", id),
+        meal: await DBConnection("Meal").where("id", id),
       });
     } else {
       res.status(404).json({ error: "Meal Not Found" });
@@ -293,7 +331,7 @@ meals.delete("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const deletedMeal = await knex("Meal").where("id", id).del();
+    const deletedMeal = await DBConnection("Meal").where("id", id).del();
 
     if (!deletedMeal) {
       return res.status(404).send("Meal Not Found");
@@ -310,7 +348,7 @@ meals.delete("/:id", async (req, res) => {
 meals.get("/:meal_id/reviews", async (req, res) => {
   const { meal_id } = req.params;
   try {
-    const reviews = await knex("Review").select("*").where({ meal_id });
+    const reviews = await DBConnection("Review").select("*").where({ meal_id });
     res.json(reviews);
   } catch (err) {
     res.status(500).json({ error: err.message });
