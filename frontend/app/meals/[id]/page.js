@@ -96,6 +96,17 @@ function MealByID() {
 
   const theme = useThemeContext();
 
+  const calculateAverageRating = (reviews) => {
+    if (reviews.length === 0) return 0;
+    const totalRating = reviews.reduce((acc, review) => {
+      return acc + review.stars;
+    }, 0);
+    console.log(totalRating);
+    return (totalRating / reviews.length).toFixed(1);
+  };
+
+  const averageRating = calculateAverageRating(reviews);
+
   return (
     <div
       className={`${
@@ -107,7 +118,12 @@ function MealByID() {
         alt={meal.title}
         className="w-full h-64 object-cover rounded-lg mb-6"
       />
-      <h1 className="text-3xl font-bold mb-4">{meal.title}</h1>
+      <h1 className="flex justify-between items-center text-3xl font-bold mb-4">
+        <span className="mr-2">{meal.title}</span>
+        <span className="text-xl mr-2 font-semibold text-yellow-500">
+          &#9733; {averageRating} / 5.0
+        </span>
+      </h1>
 
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div className="w-full sm:w-2/3">
