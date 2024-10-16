@@ -1,8 +1,21 @@
+import { useEffect, useState } from "react";
 import { useThemeContext } from "@/context/themeContext";
 import Link from "next/link";
+import fetchAverageStars from "@/lib/fetchAverageStars";
 
 function Meal({ meal }) {
   const theme = useThemeContext();
+  const [averageRating, setAverageRating] = useState(null);
+
+  useEffect(() => {
+    const getAverageRating = async () => {
+      const rating = await fetchAverageStars(meal.id);
+      setAverageRating(rating);
+    };
+
+    getAverageRating();
+  }, [meal.id]);
+
   return (
     <Link href={`/meals/${meal.id}`}>
       <div
@@ -18,16 +31,23 @@ function Meal({ meal }) {
             src={meal.image}
             alt={`image of ${meal.title}`}
           />
-          <div className="mt-4">
+          <div className="mt-4 flex flex-row justify-between">
             <p className="text-lg font-semibold">{meal.title}</p>
-            <p
-              className={`mt-2 ${
-                theme.isDarkMode ? "text-gray-300" : "text-gray-600"
-              }`}
-            >
-              {meal.description}
+            <p>
+              {averageRating !== null && (
+                <span className="mt-2 font-bold text-yellow-500">
+                  {averageRating} / 5 <span>&#9733;</span>
+                </span>
+              )}
             </p>
           </div>
+          <p
+            className={`mt-2 ${
+              theme.isDarkMode ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
+            {meal.description}
+          </p>
         </div>
         <p className="mt-4 font-bold">{meal.price} DKK</p>
       </div>
