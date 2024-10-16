@@ -33,16 +33,16 @@ meals.get("/", async (req, res) => {
       sortKey,
       sortDir,
     } = req.query;
-    let meals = await DBConnection("meal").select("*");
+    let mealsData = await DBConnection("meal").select("*");
     let query = DBConnection("meal")
       .leftJoin(
         DBConnection.raw(`(
         SELECT meal_id, COALESCE(SUM(number_of_guests), 0) AS total_guests
-        FROM Reservation
+        FROM reservation
         GROUP BY meal_id
-      ) AS Reserved`),
+      ) AS reserved`),
         "meal.id",
-        "Reserved.meal_id"
+        "reserved.meal_id"
       )
       .select(
         "meal.id",
@@ -52,11 +52,11 @@ meals.get("/", async (req, res) => {
         "meal.location",
         "meal.image",
         "meal.created_date",
-        DBConnection.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
+        DBConnection.raw("COALESCE(reserved.total_guests, 0) AS total_guests"),
         "meal.price",
         "meal.when",
         DBConnection.raw(
-          "meal.max_reservations - COALESCE(Reserved.total_guests, 0) AS available_seats"
+          "meal.max_reservations - COALESCE(reserved.total_guests, 0) AS available_seats"
         )
       );
 
@@ -68,13 +68,13 @@ meals.get("/", async (req, res) => {
     if (availableReservations === "true") {
       query = query.where(
         DBConnection.raw(
-          "COALESCE(Reserved.total_guests, 0) < meal.max_reservations"
+          "COALESCE(reserved.total_guests, 0) < meal.max_reservations"
         )
       );
     }
     if (availableReservations === "false") {
       query = query.whereRaw(
-        "COALESCE(Reserved.total_guests, 0) >= meal.max_reservations"
+        "COALESCE(reserved.total_guests, 0) >= meal.max_reservations"
       );
     }
 
@@ -126,18 +126,18 @@ meals.get("/", async (req, res) => {
     if (sortKey || sortDir) {
       if (sortDir && !sortKey) {
         return res.status(400).json({
-          error: "sortDir must work with a soreKey.",
+          error: "sortDir must work with a sortKey.",
         });
       }
       const validSortKeys = ["id", "when", "max_reservations", "price"];
       const validSortDirs = ["ASC", "DESC"];
 
-      const FormattedSortDir = sortDir ? sortDir.toUpperCase() : "ASC";
+      const formattedSortDir = sortDir ? sortDir.toUpperCase() : "ASC";
       if (
         validSortKeys.includes(sortKey) &&
-        validSortDirs.includes(FormattedSortDir)
+        validSortDirs.includes(formattedSortDir)
       ) {
-        query = query.orderBy(sortKey, FormattedSortDir);
+        query = query.orderBy(sortKey, formattedSortDir);
       } else {
         return res.status(400).json({
           error: "Invalid value for sort key or direction.",
@@ -145,8 +145,8 @@ meals.get("/", async (req, res) => {
       }
     }
 
-    meals = await query;
-    res.json(meals);
+    mealsData = await query;
+    res.json(mealsData);
   } catch (error) {
     const errMessage = error.message;
     res.status(500).json({ error: errMessage });
@@ -197,7 +197,7 @@ meals.post("/", upload.single("image"), async (req, res) => {
     .replace("T", " ");
 
   try {
-    const [newMeal] = await DBConnection("Meal").insert({
+    const [newMeal] = await DBConnection("meal").insert({
       title,
       description,
       location,
@@ -234,34 +234,34 @@ meals.get("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const meal = await DBConnection("Meal")
+    const meal = await DBConnection("meal")
       .leftJoin(
         DBConnection.raw(`(
         SELECT meal_id, COALESCE(SUM(number_of_guests), 0) AS total_guests
-        FROM Reservation
+        FROM reservation
         GROUP BY meal_id
-      ) AS Reserved`),
-        "Meal.id",
-        "Reserved.meal_id"
+      ) AS reserved`),
+        "meal.id",
+        "reserved.meal_id"
       )
       .select(
-        "Meal.id",
-        "Meal.title",
-        "Meal.max_reservations",
-        "Meal.description",
-        "Meal.location",
-        "Meal.image",
-        "Meal.created_date",
-        "Meal.price",
-        "Meal.when",
-        DBConnection.raw("COALESCE(Reserved.total_guests, 0) AS total_guests"),
+        "meal.id",
+        "meal.title",
+        "meal.max_reservations",
+        "meal.description",
+        "meal.location",
+        "meal.image",
+        "meal.created_date",
+        "meal.price",
+        "meal.when",
+        DBConnection.raw("COALESCE(reserved.total_guests, 0) AS total_guests"),
         DBConnection.raw(
-          "GREATEST(Meal.max_reservations - COALESCE(Reserved.total_guests, 0), 0) AS available_seats"
+          "GREATEST(meal.max_reservations - COALESCE(reserved.total_guests, 0), 0) AS available_seats"
         )
       )
-      .where("Meal.id", id);
+      .where("meal.id", id);
 
-    if (meal) {
+    if (meal.length > 0) {
       return res.json(meal);
     } else {
       return res.status(404).send("Meal Not Found");
@@ -305,14 +305,14 @@ meals.put("/:id", async (req, res) => {
   }
 
   try {
-    const updateMeal = await DBConnection("Meal")
+    const updateMeal = await DBConnection("meal")
       .where("id", id)
       .update(fieldsToUpdate);
 
     if (updateMeal > 0) {
       res.status(200).json({
         message: "Meal updated :)",
-        meal: await DBConnection("Meal").where("id", id),
+        meal: await DBConnection("meal").where("id", id),
       });
     } else {
       res.status(404).json({ error: "Meal Not Found" });
@@ -331,7 +331,7 @@ meals.delete("/:id", async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
   try {
-    const deletedMeal = await DBConnection("Meal").where("id", id).del();
+    const deletedMeal = await DBConnection("meal").where("id", id).del();
 
     if (!deletedMeal) {
       return res.status(404).send("Meal Not Found");
@@ -348,7 +348,7 @@ meals.delete("/:id", async (req, res) => {
 meals.get("/:meal_id/reviews", async (req, res) => {
   const { meal_id } = req.params;
   try {
-    const reviews = await DBConnection("Review").select("*").where({ meal_id });
+    const reviews = await DBConnection("review").select("*").where({ meal_id });
     res.json(reviews);
   } catch (err) {
     res.status(500).json({ error: err.message });
