@@ -356,4 +356,32 @@ meals.get("/:meal_id/reviews", async (req, res) => {
 });
 //  ------- /api/meals/:meal_id/reviews | GET | Returns all reviews for a specific meal. -----------
 
+// ----------- /api/meals/:meal_id/average | GET | Returns average stars for a meal -----------
+meals.get("/:meal_id/average_stars", async (req, res) => {
+  const { meal_id } = req.params;
+
+  try {
+    // Fetch reviews for the specified meal_id
+    const reviews = await DBConnection("review")
+      .select("stars")
+      .where({ meal_id });
+
+    if (reviews.length === 0) {
+      return res.status(404).json({ error: "No reviews found for this meal." });
+    }
+
+    const totalStars = reviews.reduce((acc, review) => acc + review.stars, 0);
+    const averageStars = (totalStars / reviews.length).toFixed(1);
+
+    res.json({
+      meal_id,
+      averageStars: Number(averageStars),
+      reviewCount: reviews.length,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// ----------- /api/meals/:meal_id/average | GET | Returns average stars for a meal -----------
+
 export default meals;
