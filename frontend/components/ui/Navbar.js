@@ -54,7 +54,7 @@ function NavBar() {
     { href: "/", label: "Home" },
     { href: "/about-us", label: "About Us" },
     { href: "/meals", label: "Meals" },
-    { href: "/share-a-meal", label: "Share A Meal" },
+    { href: "/share-a-meal", label: "Share Meal" },
     { href: "#social-media", label: "Contact" },
   ];
 
